@@ -12,6 +12,8 @@ while True:
     day = now.strftime("%d%m%Y")
     hour = now.strftime("%H")
     minutes = now.strftime("%M")
+    if int(hour) >= 22:
+        exit(0)
     if last_minute != minutes:
         folder = '/home/pi/Desktop/images/{}/{}/{}'.format(str(day),str(hour),str(minutes))
         os.makedirs(folder)
