@@ -15,6 +15,8 @@ parser.add_option("-r", "--rotation", action="store", type="int", dest="rotation
                       default=180, help="rotation of photos")
 parser.add_option("-e", "--end", action="store", type="int", dest="end",
                       default=22, help="rotation of photos")
+parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=0, help=" verbose ")
+
 (x, args) = parser.parse_args()
 
 
@@ -24,8 +26,9 @@ folder = ""
 last_hour = ""
 last_minute = ""
 while True:
-    sys.stdout.write(".")
-    sys.stdout.flush()
+    if x.verbose:
+        sys.stdout.write(".")
+        sys.stdout.flush()
     now = datetime.now()
 #    now_date = str(now).replace(":", "_").replace(" ", "").replace("-", "_").replace(".", "_").replace("\/", "_")
 #    print(now_date)
