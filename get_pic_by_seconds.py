@@ -3,8 +3,21 @@ from datetime import datetime
 camera = PiCamera()
 import os, sys
 from time import sleep
+
+from optparse import OptionParser
+
+parser = OptionParser()
+parser.add_option("-f", "--folder", action="store", type="string", dest="folder", default="/home/pi/Desktop/images",
+                      help="base folder where photos are saved")
+parser.add_option("-p", "--pause", action="store", type="int", dest="pause",
+                      default=1, help="interval between photos")
+parser.add_option("-r", "--rotation", action="store", type="int", dest="rotation",
+                      default=180, help="rotation of photos")
+(x, args) = parser.parse_args()
+
+
 camera.start_preview()
-camera.rotation = 180
+camera.rotation = x.rotation % 360
 folder = ""
 last_hour = ""
 
@@ -17,11 +30,12 @@ while True:
     day = now.strftime("%d%m%Y")
     hour = now.strftime("%H")
     minutes = now.strftime("%M")
-    if last_hour != hour:
-        folder = '/home/pi/Desktop/images' + str(day) + "/" + str(hour) + "/" + str(minutes)
-        if not os.path.exists(folder):
-            os.makedirs(folder)
+    if int(hour) >= 22:
+        exit(0)
+    if last_minute != minutes:
+        folder = os.path.join(x.folder,'{}/{}/{}'.format(str(day),str(hour),str(minutes)))
+        os.makedirs(folder)
+	last_minute = minutes
+    camera.capture(folder + '/image_{}_{}_{}_{}.jpg'.format(str(day),str(hour),str(minutes),now.strftime("%S")))
+    sleep(x.pause)
 
-    camera.capture(folder + '/image' + str(now.strftime("%S.%f")) + ".jpg")
-#    camera.capture(os.path.join(folder, "image_" + str(now_date) + ".jpg"))
-    sleep(0.1)
