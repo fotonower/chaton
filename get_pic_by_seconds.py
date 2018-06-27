@@ -13,6 +13,8 @@ parser.add_option("-p", "--pause", action="store", type="int", dest="pause",
                       default=1, help="interval between photos")
 parser.add_option("-r", "--rotation", action="store", type="int", dest="rotation",
                       default=180, help="rotation of photos")
+parser.add_option("-e", "--end", action="store", type="int", dest="end",
+                      default=22, help="rotation of photos")
 (x, args) = parser.parse_args()
 
 
@@ -20,7 +22,7 @@ camera.start_preview()
 camera.rotation = x.rotation % 360
 folder = ""
 last_hour = ""
-
+last_minute = ""
 while True:
     sys.stdout.write(".")
     sys.stdout.flush()
@@ -30,7 +32,7 @@ while True:
     day = now.strftime("%d%m%Y")
     hour = now.strftime("%H")
     minutes = now.strftime("%M")
-    if int(hour) >= 22:
+    if int(hour) >= x.end:
         exit(0)
     if last_minute != minutes:
         folder = os.path.join(x.folder,'{}/{}/{}'.format(str(day),str(hour),str(minutes)))
