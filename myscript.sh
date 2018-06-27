@@ -5,6 +5,13 @@ for pid in $(pidof -x myscript.sh); do
         exit 1
     fi
 done
+
+pause=""
+if [-n $1]
+then
+    pause=" -p $1"
+fi
 echo "launching script"
-python /home/pi/workarea/git/raspberrypi/get_pic_by_seconds.py
+
+python /home/pi/workarea/git/raspberrypi/get_pic_by_seconds.py$pause
 echo "after launch"
