@@ -14,8 +14,9 @@ fi
 
 if [ -n $2 ]
 then
-echo "launching script"
+    pause=$pause" -e $2"
 fi
 
+echo "launching script"
 python /home/pi/workarea/git/raspberrypi/get_pic_by_seconds.py$pause
 echo "after launch"
