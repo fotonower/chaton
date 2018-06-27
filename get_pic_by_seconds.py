@@ -1,6 +1,5 @@
 from picamera import PiCamera
 from datetime import datetime
-camera = PiCamera()
 import os, sys
 from time import sleep
 
@@ -19,9 +18,15 @@ parser.add_option("-v", "--verbose", action="store_true", dest="verbose", defaul
 
 (x, args) = parser.parse_args()
 
-
-camera.start_preview()
-camera.rotation = x.rotation % 360
+camera = ""
+try :
+    camera = PiCamera()
+    camera.start_preview()
+    camera.rotation = x.rotation % 360
+    print("launching script")
+except Exception, e:
+    print("script allready launched")
+    exit(0)
 folder = ""
 last_hour = ""
 last_minute = ""
