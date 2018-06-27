@@ -9,19 +9,20 @@ import numpy as np
 
 
 import sys
+import time
 port = 23
 pulse = 46
 signal = 7
 duration = 2
 
-if len(sys.argv) > 0:
-    port = int(sys.argv[0])
 if len(sys.argv) > 1:
-    pulse = int(sys.argv[1])
+    port = int(sys.argv[1])
 if len(sys.argv) > 2:
-    signal = float(sys.argv[2])
+    pulse = int(sys.argv[2])
 if len(sys.argv) > 3:
-    duration = int(sys.argv[3])
+    signal = float(sys.argv[3])
+if len(sys.argv) > 4:
+    duration = float(sys.argv[4])
 
 def send_signal(port = 23, pulse = 46, signal = 7., duration = 1.) :
 
@@ -37,14 +38,18 @@ def send_signal(port = 23, pulse = 46, signal = 7., duration = 1.) :
 	CONTROLLER.start(0)
 	CONTROLLER.ChangeDutyCycle(signal)
 
-    time.sleep(duration)
+        print (" port :  " + str(port) + ", pulse : " + str(pulse) + ", signal : " + str(signal) + " , duration : " + str(duration))
+
+        time.sleep(duration)
 
 	CONTROLLER.stop(0)
 
 	print("STOP")
 
 	GPIO.cleanup()
-    return
+        return
 
 
 
+
+send_signal(port, pulse, signal, duration) 

@@ -1,7 +1,7 @@
 from picamera import PiCamera
 from datetime import datetime
 camera = PiCamera()
-import os
+import os, sys
 from time import sleep
 
 from optparse import OptionParser
@@ -19,9 +19,14 @@ parser.add_option("-r", "--rotation", action="store", type="int", dest="rotation
 camera.start_preview()
 camera.rotation = x.rotation % 360
 folder = ""
-last_minute = ""
+last_hour = ""
+
 while True:
+    sys.stdout.write(".")
+    sys.stdout.flush()
     now = datetime.now()
+#    now_date = str(now).replace(":", "_").replace(" ", "").replace("-", "_").replace(".", "_").replace("\/", "_")
+#    print(now_date)
     day = now.strftime("%d%m%Y")
     hour = now.strftime("%H")
     minutes = now.strftime("%M")
@@ -33,3 +38,4 @@ while True:
 	last_minute = minutes
     camera.capture(folder + '/image_{}_{}_{}_{}.jpg'.format(str(day),str(hour),str(minutes),now.strftime("%S")))
     sleep(x.pause)
+
