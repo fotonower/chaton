@@ -1,7 +1,41 @@
 
-import os, sys
+import operator, json
+import random, requests
+import os, re, time, sys
 import fotonower as FC
 
+
+def count_and_display_elapsed_time(begin_time = None, message = ""):
+    if begin_time == None :
+        begin_time = time.time()
+        print ("\n" + message + " Starting time : " + str(time.time()) + "\n")
+        return time.time()
+
+    end_time = time.time()
+    elapsed = end_time - begin_time
+    print ("\n" + message + "Elapsed time : " + str(elapsed) + "\n")
+    return time.time()
+
+
+def file_order(order, list_files):
+    if order == "lexicographic":
+        list_files = sorted(list_files, key=str.lower)
+
+    if order == "numeric":
+        path_to_num = []
+        for f in list_files :
+            nums = re.findall(r'\d+', f)
+            if len(nums) != 1 :
+                print (" Missing or too much numbers : " + str(nums))
+            else :
+                path_to_num.append((int(nums[0]), f))
+        path_to_num_ordered = sorted(path_to_num, key=operator.itemgetter(0))
+        list_files = [k[1] for k in path_to_num_ordered]
+
+    if order == "like_folder" : 
+        list_files.sort(key=lambda f: int(filter(str.isdigit, f)), reverse=False)
+
+    return list_files
 
 
 def upload_folder(main_folder, portfolio_id, token, limit, offset,
@@ -31,7 +65,7 @@ def upload_folder(main_folder, portfolio_id, token, limit, offset,
 
     # , 'id' : basename
 
-    url_to_upload_loc = "http://"+root_url+"/api/v1/secured/photo/upload?token=" + token
+    url_to_upload_loc = "https://"+root_url+"/api/v1/secured/photo/upload?token=" + token
     if new :
         url_to_upload_loc += "&new_port=true"
         portfolio_id = None
@@ -100,7 +134,7 @@ if __name__ == '__main__' :
     parser.add_option("-b", "--batch_size", action="store", type="int", dest="batch_size", default=200, help="batch_size")
     parser.add_option('-d', '--datou_id', action='store', dest='datou', type="int", default=0, help='datou_id for treatment, if none provided using default user one, if 0 is set, no datou batch')
 
-    parser.add_option("-j", "--job", action="store", type="string", dest="job", default="test_autonower", help="test_autonower upload_folder upload_sub_folder")
+    parser.add_option("-j", "--job", action="store", type="string", dest="job", default="upload_folder", help="test_autonower upload_folder upload_sub_folder")
     parser.add_option("-t", "--token", action="store", type="string", dest="token", default="78d09a0790ec6ecbf119343125a81fdc", help=" token ")
     parser.add_option("-f", "--folder", action="store", type="string", dest="folder", default="/home/fotonower/", help="folder where are photo to upload")
     parser.add_option("-u", "--root_url", action="store", type="string", dest="root_url", default="www.fotonower.com", help=" token ")
