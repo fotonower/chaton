@@ -24,7 +24,7 @@
 #eval `ssh-agent`
 #ssh-add
 
-PORT = 19995
+PORT = 19998
 PAUSE=15
 END=22
 TOKEN=eb7528fd19bafe3f52bc2524e994d9e4
@@ -32,11 +32,11 @@ HOST_FOTONOWER=jussieu.fotonower.com
 BASENAME=refus
 BASEFOLDER=/home/pi/Desktop/images
 
-* * * * * mkdir -p /home/pi/.log/`date "+\%Y/\%m/\%d"`;/home/pi/workarea/tunnel_ssh.sh $PORT >> ~/.log/`date "+\%Y/\%m/\%d"`/ssh_log`date "+\%H_\%M"`.txt 2>&1
+* * * * * mkdir -p /home/pi/.log/`date "+\%Y/\%m/\%d"`;/home/pi/workarea/git/raspberrypi/tunnel_ssh.sh $PORT >> ~/.log/`date "+\%Y/\%m/\%d"`/ssh_log`date "+\%H_\%M"`.txt 2>&1
 
 
 # try to launch script to take picture every minutes from 6am to 10pm
-* 6-21 * * 1-5 mkdir -p /home/pi/.log/`date "+\%Y/\%m/\%d"`;python /home/pi/workarea/git/raspberrypi/get_pic_by_seconds.py -f /home/pi/Desktop/images -p $PAUSE -e $END >> ~/.log/`date "+\%Y/\%m/\%d"`/pic_log`date "+\%H_\%M"`.txt 2>&1
+* 6-21 * * 1-5 mkdir -p /home/pi/.log/`date "+\%Y/\%m/\%d"`;python /home/pi//workarea/git/raspberrypi/raspberry_camera/python/main.py -f /home/pi/Desktop/images -p $PAUSE -e $END >> ~/.log/`date "+\%Y/\%m/\%d"`/pic_log`date "+\%H_\%M"`.txt 2>&1
 
 # upload photos every minutes
 * 6-21 * * 1-5 mkdir -p /home/pi/.log/`date "+\%Y/\%m/\%d"`;python /home/pi/workarea/upload_photos.py -n $BASENAME -u $HOST_FOTONOWER -f $BASEFOLDER -t $TOKEN >> ~/.log/`date "+\%Y/\%m/\%d"`/upload_log`date "+\%H_\%M"`.txt 2>&1
