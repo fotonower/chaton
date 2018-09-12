@@ -27,10 +27,10 @@
 
 
 # try to launch script to take picture every minutes from 6am to 10pm
-* 6-21 * * 1-5 mkdir -p $LOGFOLDER/`date "+\%Y/\%m/\%d"`;python /home/pi//workarea/git/raspberrypi/raspberry_camera/python/main.py -f $BASEFOLDER -p $PAUSE -e $END >> $LOGFOLDER/`date "+\%Y/\%m/\%d"`/pic_log`date "+\%H_\%M"`.txt 2>&1
+* 6-$END * * 1-5 mkdir -p $LOGFOLDER/`date "+\%Y/\%m/\%d"`;python /home/pi//workarea/git/raspberrypi/raspberry_camera/python/main.py -f $BASEFOLDER -p $PAUSE -e $END >> $LOGFOLDER/`date "+\%Y/\%m/\%d"`/pic_log`date "+\%H_\%M"`.txt 2>&1
 
 # upload photos every minutes
-* 6-21 * * 1-5 mkdir -p $LOGFOLDER/`date "+\%Y/\%m/\%d"`;python /home/pi/workarea/git/raspberrypi/upload_photos.py -n $BASENAME -u $HOST_FOTONOWER -f $BASEFOLDER -t $TOKEN >> $LOGFOLDER/`date "+\%Y/\%m/\%d"`/upload_log`date "+\%H_\%M"`.txt 2>&1
+* 6-$END * * 1-5 mkdir -p $LOGFOLDER/`date "+\%Y/\%m/\%d"`;python /home/pi/workarea/git/raspberrypi/upload_photos.py -n $BASENAME -u $HOST_FOTONOWER -f $BASEFOLDER -t $TOKEN >> $LOGFOLDER/`date "+\%Y/\%m/\%d"`/upload_log`date "+\%H_\%M"`.txt 2>&1
 # upload failed uploaded batch
 22 21 * * 1-5 mkdir -p $LOGFOLDER/`date "+\%Y/\%m/\%d"`;python /home/pi/workarea/git/raspberrypi/reprise_erreur_upload.py -n $BASENAME -u $HOST_FOTONOWER -f $BASEFOLDER -t $TOKEN   >> $LOGFOLDER/`date "+\%Y/\%m/\%d"`/reupload_log`date "+\%H_\%M"`.txt 2>&1
 
