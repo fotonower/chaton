@@ -125,7 +125,7 @@ if __name__ == "__main__":
         day = x.day
         reupload(day,x.folder,current)
     elif x.job == "test":
-        print os.getenv('PYTHONPATH')
+        print(os.getenv('PYTHONPATH'))
         from tests.upload_test import test
         ret = test(True)
 
