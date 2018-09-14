@@ -5,9 +5,9 @@ import fotonower as FC
 import os
 import datetime 
 import shutil
+from raspberry_camera.python.lib.local_stat_raspberry import LocalStatRaspberry as LSR
 
-
-def upload(folder,day,hour,minutes,name,fc):
+def upload(folder,day,hour,minutes,name,fc,lsr):
     port_id = ""
     try:
         with open(os.path.join(os.getenv('HOME'), '.fotonower_config/port_id_{}.txt'.format(day)), 'r') as f:
@@ -41,6 +41,8 @@ def upload(folder,day,hour,minutes,name,fc):
                                                  verbose=False, compute_classification=True, arg_aux="",auto_treatment= False)
         try :
             test = map_result_insert_aux.keys()
+            for photo_path in test:
+                lsr.upload_one(photo_path,photo_id_global=map_result_insert_aux[photo_path])
             print("uploaded " + str(len(map_result_insert_aux)) + " photos")
             print("rm")
             shutil.rmtree(folder)
@@ -53,7 +55,7 @@ def upload(folder,day,hour,minutes,name,fc):
         print(e)
         return -2
 
-def reupload(day,folder,current):
+def reupload(day,folder,current,lsr):
     if day == "":
         day = current.strftime("%d%m%Y")
     fullpath = os.path.join(folder, day)
@@ -62,7 +64,7 @@ def reupload(day,folder,current):
     missed = 0
     for hour in os.listdir(fullpath):
         for minute in os.listdir(os.path.join(fullpath, hour)):
-            res = upload(x.folder, day, hour, minute, x.name, fc)
+            res = upload(x.folder, day, hour, minute, x.name, fc,lsr)
             dict_result[day + hour + minute] = res
             if res == 0:
                 uploaded += 1
@@ -89,7 +91,21 @@ if __name__ == "__main__":
                       default="raspberry", help="base name for portfolio")
     parser.add_argument('-j', '--job', dest="job", type=str, action="store", default="upload", help="upload or reprise")
     parser.add_argument("-D", "--day", type=str, dest='day', default="", help="day of folder to upload")
+    parser.add_argument("--folder_local_db", action="store", type=str, dest="folder_local_db",
+                      default="/home/pi/.fotonower_config",
+                      help="local folder to save stat and info")
+    parser.add_argument("--file_local_db", action="store", type=str, dest="file_local_db",
+                      default="/home/pi/.fotonower_config/sqlite.db",
+                      help="local file to save stat and info in sqlite format")
     x = parser.parse_args()
+
+    folder_local_db = x.folder_local_db
+    file_local_db = x.file_local_db
+    lsr = None
+    try:
+        lsr = LSR(file_local_db, folder_local_db)
+    except:
+        print("no sqlite3 installed")
 
     current = datetime.datetime.now() - datetime.timedelta(minutes=1)
     print(current)
@@ -109,7 +125,7 @@ if __name__ == "__main__":
         day = current.strftime("%d%m%Y")
         hour = current.strftime("%H")
         minutes = current.strftime("%M")
-        ret = upload(folder,day,hour,minutes,x.name,fc)
+        ret = upload(folder,day,hour,minutes,x.name,fc,lsr)
         if ret != 0:
             print('we had an error with upload')
             if ret == 1:
@@ -123,7 +139,7 @@ if __name__ == "__main__":
             print("please provide a valid folder")
             exit(2)
         day = x.day
-        reupload(day,x.folder,current)
+        reupload(day,x.folder,current, lsr)
     elif x.job == "test":
         print(os.getenv('PYTHONPATH'))
         from tests.upload_test import test
