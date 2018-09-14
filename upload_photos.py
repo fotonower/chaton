@@ -3,8 +3,8 @@
 
 import fotonower as FC
 import os
-import datetime 
-import shutil
+import datetime
+import psutil
 from raspberry_camera.python.lib.local_stat_raspberry import LocalStatRaspberry as LSR
 
 def upload(folder,day,hour,minutes,name,fc,lsr):
@@ -120,6 +120,14 @@ if __name__ == "__main__":
         print("please provide a valid token")
         exit(1)
     if x.job == "upload":
+        test = 0
+        for pid in psutil.pids():
+            p = psutil.Process(pid)
+            if "upload" in p.cmdline():
+                test += 1
+        if test > 5:
+            print("too many processes, exiting")
+            exit(3)
         if not os.path.isdir(x.folder):
             print("please provide a valid folder")
             exit(2)
