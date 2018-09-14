@@ -265,7 +265,9 @@ class SqlLiteConn():
     def get_today_portfolio_id(self, date):
         return 0
 
-
+    def delete_one(self,photo_path):
+        query = "UPDATE mra_photos SET deleted_at = current_timestamp WHERE filename=\"" + str(photo_path) + "\";"
+        self.upsertAndCommit(query)
 
 def test(filename):
     sc = SqlLiteConn(filename)

@@ -102,6 +102,15 @@ class LocalStatRaspberry():
 
         return stats
 
+    def delete_one(self,photopath, date= None):
+        if date == None :
+            date = datetime.datetime.now()
+
+        if self.sql_conn != None:
+            self.sql_conn.delete_one(photopath)
+        if self.folder_read_write != None :
+            self.folder_read_write.delete_one(photopath, date)
+
 
 def test(sqlfile, folder):
     import datetime

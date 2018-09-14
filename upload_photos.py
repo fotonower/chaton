@@ -45,7 +45,9 @@ def upload(folder,day,hour,minutes,name,fc,lsr):
                 lsr.upload_one(photo_path,photo_id_global=map_result_insert_aux[photo_path])
             print("uploaded " + str(len(map_result_insert_aux)) + " photos")
             print("rm")
-            shutil.rmtree(folder)
+            for photo_path in test :
+                os.remove(photo_path)
+                lsr.delete_one(photo_path)
             return 0
         except Exception as e:
             print("not deleting.")

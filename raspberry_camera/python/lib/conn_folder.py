@@ -11,6 +11,7 @@ class FolderReadWrite():
         self.counter_photo = "counter_photo"
         self.counter_upload = "counter_upload"
         self.portfolio_id = "portfolio_id"
+        self.counter_delete = "counter_deletion"
 
     def aux_increment_file(self, counter_increment):
 
@@ -105,6 +106,18 @@ class FolderReadWrite():
         except Exception as e:
             print(str(e))
 
+
+    def delete_one(self, photopath, date):
+        try :
+            day = date.strftime("%d%m%Y")
+    #        hour = date.strftime("%H")
+    #        minutes = date.strftime("%M")
+
+            counter_delete_path = os.path.join(self.root_folder, day, self.counter_delete)
+
+            self.aux_increment_file(counter_delete_path)
+        except Exception as e:
+            print (str(e))
 
 
 if __name__ == "__main__" :
