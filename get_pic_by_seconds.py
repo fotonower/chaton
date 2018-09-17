@@ -23,9 +23,13 @@ try :
     camera = PiCamera()
     camera.start_preview()
     camera.rotation = x.rotation % 360
+    camera.resolution = (1280, 720)
+    camera.resolution = (2592, 1944)
+    camera.shutter_speed = 10000
     print("launching script")
 except Exception, e:
     print("script allready launched")
+    print (str(e))
     exit(0)
 folder = ""
 last_hour = ""
