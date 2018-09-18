@@ -257,8 +257,18 @@ class SqlLiteConn():
         return {"nb_photos":0}
 
 
-
-#day_taken_at` INTEGER DEFAULT NULL,
+    def get_pic_to_treat(self,limit):
+        try :
+            query_select = "SELECT * FROM mra_photos WHERE to_upload is NULL"
+            if limit != 0:
+                query_select += " LIMIT " + str(limit)
+            cur = self.con.cursor()
+            cur.execute(query_select)
+            data = cur.fetchall()
+            return data
+        except Exception as e:
+            print(str(e))
+            return []
 # `hour_taken_at
 
     # VR needs maybe to be changed to be by name !
