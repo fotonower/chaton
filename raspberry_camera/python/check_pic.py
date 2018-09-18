@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from skimage.measure import compare_ssim as ssim
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import numpy as np
 import cv2
 from lib.local_stat_raspberry import LocalStatRaspberry as LSR
