@@ -259,7 +259,7 @@ class SqlLiteConn():
 
     def get_pic_to_treat(self,limit):
         try :
-            query_select = "SELECT * FROM mra_photos WHERE to_upload is NULL"
+            query_select = "SELECT * FROM mra_photos WHERE uploaded_at is NULL"
             if limit != 0:
                 query_select += " LIMIT " + str(limit)
             cur = self.con.cursor()
