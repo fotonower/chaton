@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from skimage.measure import structural_similarity as ssim
+from skimage.measure import compare_ssim as ssim
 import matplotlib.pyplot as plt
 import numpy as np
 import cv2
