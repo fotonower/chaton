@@ -33,10 +33,10 @@ def get_image_and_compare(lsr,limit, threshold,verbose = False):
     images = lsr.get_photo_to_treat(limit)
     to_update = []
     to_delete = []
-    picA = None
-    picB = None
+    picA = []
+    picB = []
     for i in range(1,len(images)):
-        if not picA :
+        if len(picA) == 0 :
             picA = cv2.imread(images[i-1][3])
         picB = cv2.imread(images[i][3])
         m = mse(picA, picB)
