@@ -259,7 +259,7 @@ class SqlLiteConn():
 
     def get_pic_to_treat(self,limit):
         try :
-            query_select = "SELECT * FROM mra_photos WHERE upload = 1"
+            query_select = "SELECT * FROM mra_photos WHERE to_upload = 1"
             if limit != 0:
                 query_select += " LIMIT " + str(limit)
             cur = self.con.cursor()
@@ -273,7 +273,7 @@ class SqlLiteConn():
 
     def set_pic_to_upload(self,list_ids):
         try:
-            query_update = "UPDATE mra_photos SET upload = 2 where id in (" + ','.join(list_ids) + ");"
+            query_update = "UPDATE mra_photos SET to_upload = 2 where id in (" + ','.join(list_ids) + ");"
             cur = self.con.cursor()
             cur.upsertAndCommit(query_update)
         except Exception as e:
