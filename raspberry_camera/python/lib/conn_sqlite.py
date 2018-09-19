@@ -287,7 +287,8 @@ class SqlLiteConn():
             if len(to_update) > 0:
                 query_update = "UPDATE mra_photos SET " + ','.join(to_update) + " where id = " + str(id)
                 cur = self.con.cursor()
-                cur.upsertAndCommit(query_update)
+                cur.insert(query_update)
+                self.con.commit()
         except Exception as e:
             print(str(e))
 
@@ -298,7 +299,9 @@ class SqlLiteConn():
 
     def delete_one(self,photo_path):
         query = "UPDATE mra_photos SET deleted_at = current_timestamp WHERE filename=\"" + str(photo_path) + "\";"
-        self.upsertAndCommit(query)
+        cur = self.con.cursor()
+        cur.insert(query)
+        self.con.commit()
 
 def test(filename):
     sc = SqlLiteConn(filename)
