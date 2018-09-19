@@ -44,7 +44,7 @@ def get_image_and_compare(lsr,limit, threshold,verbose = False):
         picA = picB
 
         tmp = images[i - 1][3].split('.')
-        new_name = tmp[0] + '_' + str(s) + '.' + tmp[2]
+        new_name = tmp[0] + '_' + str(s) + '.' + tmp[1]
         # a modifier par un delete quand on aura confirmer que les photos etaient bien a supprimer
         os.rename(images[i - 1][3], new_name)
         if 1 - s < threshold:
