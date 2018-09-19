@@ -53,12 +53,12 @@ def get_image_and_compare(lsr,limit, threshold,verbose = False):
             to_update.append(str(images[i - 1][0]))
         else:
             to_update.append(str(images[i-1][0]))
-            to_delete.append({"id": str(images[i - 1][0]), "filename": new_name, "to_upload": "-1"})
+            to_delete.append({"id_local": str(images[i - 1][0]), "filename": new_name, "to_upload": "-1"})
     if len(images) > 0:
         to_update.append(str(images[-1][0]))
     if len(to_delete) > 0:
         for item in to_delete:
-            lsr.update_one(item['id'], ["filename","to_upload"],[item['filename'],item['to_upload']])
+            lsr.update_one(item['id_local'], ["filename","to_upload"],[item['filename'],item['to_upload']])
 
     if len(to_update) > 0:
         lsr.set_pic_to_upload(to_update)
