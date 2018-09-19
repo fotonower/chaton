@@ -273,7 +273,7 @@ class SqlLiteConn():
 
     def set_pic_to_upload(self,list_ids):
         try:
-            query_update = "UPDATE mra_photos SET to_upload = 2 where id in (" + ','.join(list_ids) + ");"
+            query_update = "UPDATE mra_photos SET to_upload = 2 where id_local in (" + ','.join(list_ids) + ");"
             self.upsertAndCommit(query_update)
         except Exception as e:
             print(str(e))
