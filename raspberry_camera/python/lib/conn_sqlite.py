@@ -143,8 +143,8 @@ class SqlLiteConn():
     def upload_one(self, photopath, date, photo_id_global):
         query = "UPDATE mra_photos SET uploaded_at = current_timestamp, photo_id_global = " + str(photo_id_global) + " WHERE filename=\"" + str(photopath) + "\";"
         cur = self.con.cursor()
-        cur.insert(query)
-        self.con.commit()   
+        cur.execute(query)
+        self.con.commit()
 
 
 
@@ -289,7 +289,7 @@ class SqlLiteConn():
             if len(to_update) > 0:
                 query_update = "UPDATE mra_photos SET " + ','.join(to_update) + " where id = " + str(id)
                 cur = self.con.cursor()
-                cur.insert(query_update)
+                cur.execute(query_update)
                 self.con.commit()
         except Exception as e:
             print(str(e))
@@ -302,7 +302,7 @@ class SqlLiteConn():
     def delete_one(self,photo_path):
         query = "UPDATE mra_photos SET deleted_at = current_timestamp WHERE filename=\"" + str(photo_path) + "\";"
         cur = self.con.cursor()
-        cur.insert(query)
+        cur.execute(query)
         self.con.commit()
 
 def test(filename):
