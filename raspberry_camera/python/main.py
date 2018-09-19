@@ -23,6 +23,8 @@ def take_pictures(lsr,base_folder,end,pause,verbose):
     last_minute = ""
     while True:
         if verbose:
+            print("taking picture")
+        else:
             sys.stdout.write(".")
             sys.stdout.flush()
         now = datetime.now()
@@ -31,6 +33,7 @@ def take_pictures(lsr,base_folder,end,pause,verbose):
         day = now.strftime("%d%m%Y")
         hour = now.strftime("%H")
         minutes = now.strftime("%M")
+
         if int(hour) >= end:
             exit(0)
         if last_minute != minutes:
@@ -38,7 +41,7 @@ def take_pictures(lsr,base_folder,end,pause,verbose):
             if not os.path.exists(folder):
                 os.makedirs(folder)
         last_minute = minutes
-        filename = folder + '/image_{}_{}_{}_{}.jpg'.format(str(day), str(hour), str(minutes), now.strftime("%S"))
+        filename = folder + '/image_{}_{}_{}_{}_{}.jpg'.format(str(day), str(hour), str(minutes), now.strftime("%S"), now.microsecond)
         camera.capture(filename)
         lsr.append_photo(filename)
         sleep(pause)
@@ -61,6 +64,20 @@ parser.add_option("--folder_local_db", action="store", type="string", dest="fold
                       help="local folder to save stat and info")
 parser.add_option("--file_local_db", action="store", type="string", dest="file_local_db", default="/home/pi/.fotonower_config/sqlite.db",
                       help="local file to save stat and info in sqlite format")
+
+
+parser.add_option("-t", "--token", action="store", type="string", dest="token",
+                      default="empty_dummy", help=" token ")
+
+parser.add_option("-u", "--root_url", action="store", type="string", dest="root_url", default="vision.fotonower.com",
+                      help="root_url to upload photos")
+
+parser.add_option("-d", "--datou", action="store", type="string", dest="datou",
+                      default="2",help="datou id to be treated")
+parser.add_option("-P", "--protocol", action="store", type="string", dest="protocol",
+                      default="https", help="http or https")
+parser.add_option("-D", "--day", type='string', dest='day', default="", help="day of folder to upload")
+
 
 (x, args) = parser.parse_args()
 

@@ -111,6 +111,25 @@ class LocalStatRaspberry():
         if self.folder_read_write != None :
             self.folder_read_write.delete_one(photopath, date)
 
+    def get_photo_to_treat(self,limit):
+        ret = []
+        if self.sql_conn != None:
+            ret = self.sql_conn.get_pic_to_treat(limit)
+        else:
+            print("not implemented with files")
+        return ret
+
+    def set_pic_to_upload(self,list_id):
+        if self.sql_conn != None:
+            self.sql_conn.set_pic_to_upload(list_id)
+        else:
+            print("not implemented with files")
+
+    def update_one(self,id,col,values):
+        if self.sql_conn != None:
+            self.sql_conn.update_one(id,col,values)
+        else:
+            print("not implemented with files")
 
 def test(sqlfile, folder):
     import datetime

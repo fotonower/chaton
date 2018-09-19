@@ -221,7 +221,7 @@ class SqlLiteConn():
 
 
 
-     # MG quaestion : veux t-on plutot le photo_id_local
+     # MG question : veux t-on plutot le photo_id_local
     def tag_photo(self, filename, hashtag, type = 311) :
             hashtag_id = self.get_hashtag_id_from_hashtag(hashtag)
             photo_id_local = self.get_photo_id_from_photo_path(filename)
@@ -257,9 +257,41 @@ class SqlLiteConn():
         return {"nb_photos":0}
 
 
-
-#day_taken_at` INTEGER DEFAULT NULL,
+    def get_pic_to_treat(self,limit):
+        try :
+            query_select = "SELECT * FROM mra_photos WHERE to_upload = 1"
+            if limit != 0:
+                query_select += " LIMIT " + str(limit)
+            cur = self.con.cursor()
+            cur.execute(query_select)
+            data = cur.fetchall()
+            return data
+        except Exception as e:
+            print(str(e))
+            return []
 # `hour_taken_at
+
+    def set_pic_to_upload(self,list_ids):
+        try:
+            query_update = "UPDATE mra_photos SET to_upload = 2 where id in (" + ','.join(list_ids) + ");"
+            cur = self.con.cursor()
+            cur.upsertAndCommit(query_update)
+        except Exception as e:
+            print(str(e))
+
+    def update_one(self,id,col= [],values = []):
+        try:
+            to_update = []
+            for i in range(0,len(col)):
+                to_update.append(col[i] + " = " + values[i])
+            if len(to_update) > 0:
+                query_update = "UPDATE mra_photos SET " + ','.join(to_update) + " where id = " + str(id)
+                cur = self.con.cursor()
+                cur.insert(query_update)
+                self.con.commit()
+        except Exception as e:
+            print(str(e))
+
 
     # VR needs maybe to be changed to be by name !
     def get_today_portfolio_id(self, date):
@@ -267,7 +299,9 @@ class SqlLiteConn():
 
     def delete_one(self,photo_path):
         query = "UPDATE mra_photos SET deleted_at = current_timestamp WHERE filename=\"" + str(photo_path) + "\";"
-        self.upsertAndCommit(query)
+        cur = self.con.cursor()
+        cur.insert(query)
+        self.con.commit()
 
 def test(filename):
     sc = SqlLiteConn(filename)
