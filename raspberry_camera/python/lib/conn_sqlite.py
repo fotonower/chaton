@@ -142,7 +142,9 @@ class SqlLiteConn():
 
     def upload_one(self, photopath, date, photo_id_global):
         query = "UPDATE mra_photos SET uploaded_at = current_timestamp, photo_id_global = " + str(photo_id_global) + " WHERE filename=\"" + str(photopath) + "\";"
-        self.upsertAndCommit(query)
+        cur = self.con.cursor()
+        cur.insert(query)
+        self.con.commit()   
 
 
 
