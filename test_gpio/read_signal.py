@@ -42,4 +42,5 @@ def read_signal(port = 18, nb_time = 1, wait_for = 10):
 
         GPIO.cleanup()
 
+print(time.strftime("%c"))
 read_signal(port, nb_time, wait_for)
