@@ -282,7 +282,7 @@ class SqlLiteConn():
         try:
             to_update = []
             for i in range(0,len(col)):
-                to_update.append(col[i] + " = " + values[i])
+                to_update.append(col[i] + " = \"" + values[i] + "\"")
             if len(to_update) > 0:
                 query_update = "UPDATE mra_photos SET " + ','.join(to_update) + " where id = " + str(id)
                 self.upsertAndCommit(query_update)
