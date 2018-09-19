@@ -40,7 +40,7 @@ def get_image_and_compare(lsr,limit, threshold,verbose = False):
             picA = cv2.imread(images[i-1][3])
         picB = cv2.imread(images[i][3])
         m = mse(picA, picB)
-        s = ssim(picA, picB)
+        s = ssim(picA, picB,multichannel=True)
         picA = picB
 
         if m < threshold:
