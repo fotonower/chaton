@@ -43,22 +43,25 @@ def get_image_and_compare(lsr,limit, threshold,verbose = False):
         s = ssim(picA, picB,multichannel=True)
         picA = picB
 
-        if m < threshold:
-            tmp = images[i-1][3].split('.')
-            new_name = tmp[0]+'_to_delete.' + tmp[2]
-            #a modifier par un delete quand on aura confirmer que les photos etaient bien a supprimer
-            os.rename(images[i-1][3], new_name)
+        tmp = images[i - 1][3].split('.')
+        new_name = tmp[0] + '_' + str(s) + '.' + tmp[2]
+        # a modifier par un delete quand on aura confirmer que les photos etaient bien a supprimer
+        os.rename(images[i - 1][3], new_name)
+        if 1 - s < threshold:
             to_delete.append({"id":str(images[i-1][0]),"filename" : new_name, "to_upload" : "-1"})
             #a supprimer quand on aura confirmer que les photos etaient bien a supprimer
             to_update.append(str(images[i - 1][0]))
         else:
             to_update.append(str(images[i-1][0]))
+            to_delete.append({"id": str(images[i - 1][0]), "filename": new_name, "to_upload": "-1"})
+    if len(images) > 0:
+        to_update.append(str(images[-1][0]))
     if len(to_delete) > 0:
         for item in to_delete:
             lsr.update_one(item['id'], ["filename","to_upload"],[item['filename'],item['to_upload']])
 
-
-    lsr.set_pic_to_upload(to_update)
+    if len(to_update) > 0:
+        lsr.set_pic_to_upload(to_update)
 
 
     test = 1
