@@ -221,7 +221,7 @@ class SqlLiteConn():
 
 
 
-     # MG quaestion : veux t-on plutot le photo_id_local
+     # MG question : veux t-on plutot le photo_id_local
     def tag_photo(self, filename, hashtag, type = 311) :
             hashtag_id = self.get_hashtag_id_from_hashtag(hashtag)
             photo_id_local = self.get_photo_id_from_photo_path(filename)

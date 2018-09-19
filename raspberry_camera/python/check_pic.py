@@ -44,6 +44,7 @@ def get_image_and_compare(lsr,limit, threshold,verbose = False):
         if m < threshold:
             tmp = images[i-1][3].split('.')
             new_name = tmp[0]+'_to_delete.' + tmp[2]
+            #a modifier par un delete quand on aura confirmer que les photos etaient bien a supprimer
             os.rename(images[i-1][3], new_name)
             to_delete.append({"id":str(images[i-1][0]),"filename" : new_name, "to_upload" : "-1"})
             #a supprimer quand on aura confirmer que les photos etaient bien a supprimer
