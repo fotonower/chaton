@@ -8,13 +8,14 @@ from lib.local_stat_raspberry import LocalStatRaspberry as LSR
 from optparse import OptionParser
 
 
-def take_pictures(lsr,base_folder,end,pause,verbose):
+def take_pictures(lsr,base_folder,end,pause,shutter,verbose):
     from picamera import PiCamera
     camera = ""
     try:
         camera = PiCamera()
         camera.start_preview()
         camera.rotation = x.rotation % 360
+	camera.shutter_speed = shutter
         print("launching script")
     except Exception, e:
         print("script allready launched")
@@ -78,7 +79,7 @@ parser.add_option("-P", "--protocol", action="store", type="string", dest="proto
                       default="https", help="http or https")
 parser.add_option("-D", "--day", type='string', dest='day', default="", help="day of folder to upload")
 
-
+parser.add_option('-s','--shutter_speed',dest='shutter',default=10000,type='int',help='shutter speed for camera',action='store')
 (x, args) = parser.parse_args()
 
 folder_local_db = x.folder_local_db
@@ -88,7 +89,7 @@ job = x.job
 lsr = LSR(file_local_db, folder_local_db)
 
 if job == "take_photo": # VR 29-8-18 : I suggest to make a function of all this instead of having it in the main
-    take_pictures(lsr,x.folder, x.end, x.pause, x.verbose)
+    take_pictures(lsr,x.folder, x.end, x.pause,x.shutter, x.verbose)
 else :
     print ("Job " + str(job) + " not yet implemented !")
 
