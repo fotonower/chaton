@@ -99,19 +99,47 @@ if __name__ == "__main__":
     parser.add_argument("--file_local_db", action="store", type=str, dest="file_local_db",
                       default="/home/pi/.fotonower_config/sqlite.db",
                       help="local file to save stat and info in sqlite format")
+    parser.add_argument("-v", "--verbose", action="store_true", dest="verbose", default=0, help=" verbose ")
     x = parser.parse_args()
 
     folder_local_db = x.folder_local_db
     file_local_db = x.file_local_db
+    verbose = x.verbose
+
+
+
     lsr = None
     try:
         lsr = LSR(file_local_db, folder_local_db)
     except:
         print("no sqlite3 installed")
 
+
+
+    def count_process(verbose = False):
+        import psutil
+        test = 0
+        for pid in psutil.pids():
+            p = psutil.Process(pid)
+            cmd_line_list = p.cmdline()
+            cmd_line = cmd_line_list[2] if len(cmd_line_list) >= 3 else cmd_line_list[-1] if len(cmd_line_list) > 0 else ""
+
+            if "upload" in cmd_line:
+                test += 1
+
+            if verbose :
+                print (str(p.cmdline()))
+
+
+        print ("Count : " + str(test))
+
+        return test
+
+
+
     current = datetime.datetime.now() - datetime.timedelta(minutes=1)
     print(current)
-    if x.token == "":
+    if x.token == "" and x.job != "count" :
         print("please provide a token")
         exit(1)
     try:
@@ -119,12 +147,11 @@ if __name__ == "__main__":
     except Exception as e:
         print("please provide a valid token")
         exit(1)
-    if x.job == "upload":
-        test = 0
-        for pid in psutil.pids():
-            p = psutil.Process(pid)
-            if "upload" in p.cmdline():
-                test += 1
+    if x.job == "count":
+        count_process(verbose)
+    elif x.job == "upload":
+        test = count_process(verbose)
+
         if test > 5:
             print("too many processes, exiting")
             exit(3)
