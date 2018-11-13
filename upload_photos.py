@@ -120,16 +120,18 @@ if __name__ == "__main__":
         import psutil
         test = 0
         for pid in psutil.pids():
-            p = psutil.Process(pid)
-            cmd_line_list = p.cmdline()
-            cmd_line = cmd_line_list[2] if len(cmd_line_list) >= 3 else cmd_line_list[-1] if len(cmd_line_list) > 0 else ""
+            try :
+                p = psutil.Process(pid)
+                cmd_line_list = p.cmdline()
+                cmd_line = cmd_line_list[2] if len(cmd_line_list) >= 3 else cmd_line_list[-1] if len(cmd_line_list) > 0 else ""
 
-            if "upload" in cmd_line:
-                test += 1
+                if "upload" in cmd_line:
+                    test += 1
 
-            if verbose :
-                print (str(p.cmdline()))
-
+                if verbose :
+                    print (str(p.cmdline()))
+            except:
+                pass
 
         print ("Count : " + str(test))
 
