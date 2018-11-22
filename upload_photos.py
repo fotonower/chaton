@@ -7,8 +7,9 @@ import datetime
 import psutil
 from raspberry_camera.python.lib.local_stat_raspberry import LocalStatRaspberry as LSR
 
-def upload(folder,day,hour,minutes,name,fc,lsr):
+def upload(folder,day,hour,minutes,name,fc,lsr,datou):
     port_id = ""
+    datou_current_id = ""
     try:
         with open(os.path.join(os.getenv('HOME'), '.fotonower_config/port_id_{}.txt'.format(day)), 'r') as f:
             port_id = f.read()
@@ -16,6 +17,8 @@ def upload(folder,day,hour,minutes,name,fc,lsr):
                 os.remove(os.path.join(os.getenv('HOME'), '.fotonower_config/port_id_{}.txt'.format(day)))
                 print("portfolio_id is not saved in file, deleting and exiting...")
                 exit(1)
+        with open(os.path.join(os.getenv('HOME'), '.fotonower_config/current_id_{}.txt'.format(day)), 'w') as f:
+            datou_current_id=f.read()
     except Exception as e:
         print('no port, creating one')
         port_id = str(fc.create_portfolio("{}_{}".format(name,day)))
@@ -27,6 +30,14 @@ def upload(folder,day,hour,minutes,name,fc,lsr):
                 return(1)
         with open(os.path.join(os.getenv('HOME'), '.fotonower_config/port_id_{}.txt'.format(day)),'w') as f:
             f.write(port_id)
+        if datou != 0:
+            ret=fc.set_datou_current(int(port_id),datou)
+            try :
+                datou_current_id = str(ret['id'][0])
+                with open(os.path.join(os.getenv('HOME'), '.fotonower_config/current_id_{}.txt'.format(day)), 'w') as f:
+                    f.write(datou_current_id)
+            except:
+                pass
     if int(port_id) == 0:
         print('error with portfolio, exiting...')
         exit(1)
@@ -57,7 +68,7 @@ def upload(folder,day,hour,minutes,name,fc,lsr):
         print(e)
         return -2
 
-def reupload(day,folder,current,lsr):
+def reupload(day,folder,current,lsr,datou):
     if day == "":
         day = current.strftime("%d%m%Y")
     fullpath = os.path.join(folder, day)
@@ -66,7 +77,7 @@ def reupload(day,folder,current,lsr):
     missed = 0
     for hour in os.listdir(fullpath):
         for minute in os.listdir(os.path.join(fullpath, hour)):
-            res = upload(x.folder, day, hour, minute, x.name, fc,lsr)
+            res = upload(x.folder, day, hour, minute, x.name, fc,lsr,datou)
             dict_result[day + hour + minute] = res
             if res == 0:
                 uploaded += 1
@@ -100,6 +111,7 @@ if __name__ == "__main__":
                       default="/home/pi/.fotonower_config/sqlite.db",
                       help="local file to save stat and info in sqlite format")
     parser.add_argument("-v", "--verbose", action="store_true", dest="verbose", default=0, help=" verbose ")
+    parser.add_argument('--datou',action='store',dest='datou',default=0,help="datou_id to launch at upload")
     x = parser.parse_args()
 
     folder_local_db = x.folder_local_db
@@ -164,7 +176,7 @@ if __name__ == "__main__":
         day = current.strftime("%d%m%Y")
         hour = current.strftime("%H")
         minutes = current.strftime("%M")
-        ret = upload(folder,day,hour,minutes,x.name,fc,lsr)
+        ret = upload(folder,day,hour,minutes,x.name,fc,lsr,x.datou)
         if ret != 0:
             print('we had an error with upload')
             if ret == 1:
@@ -178,7 +190,7 @@ if __name__ == "__main__":
             print("please provide a valid folder")
             exit(2)
         day = x.day
-        reupload(day,x.folder,current, lsr)
+        reupload(day,x.folder,current, lsr,x.datou)
     elif x.job == "test":
         print(os.getenv('PYTHONPATH'))
         from tests.upload_test import test
