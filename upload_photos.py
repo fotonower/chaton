@@ -49,7 +49,7 @@ def upload(folder,day,hour,minutes,name,fc,lsr,datou):
     files = [os.path.join(folder,x) for x in os.listdir(folder)]
     try :
         map_result_insert_aux,list_cur_ids = fc.upload_medias(files,portfolio_id=int(port_id) ,upload_small=True,
-                                                 verbose=False, compute_classification=True, arg_aux="",auto_treatment= False)
+                                                 verbose=False, compute_classification=True, arg_aux="",auto_treatment= False,datou_current_id = datou_current_id)
         try :
             test = map_result_insert_aux.keys()
             for photo_path in test:
