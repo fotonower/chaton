@@ -17,10 +17,17 @@ def upload(folder,day,hour,minutes,name,fc,lsr,datou):
                 os.remove(os.path.join(os.getenv('HOME'), '.fotonower_config/port_id_{}.txt'.format(day)))
                 print("portfolio_id is not saved in file, deleting and exiting...")
                 exit(1)
-        with open(os.path.join(os.getenv('HOME'), '.fotonower_config/current_id_{}.txt'.format(day)), 'r') as f:
-            datou_current_id=f.read()
-        print(datou_current_id)
-        print(datou)
+        try:
+            with open(os.path.join(os.getenv('HOME'), '.fotonower_config/current_id_{}.txt'.format(day)), 'r') as f:
+                datou_current_id=f.read()
+        except:
+            ret=fc.set_datou_current(int(port_id),mtd_id=datou)
+            try :
+                datou_current_id = str(ret['id'][0])
+                with open(os.path.join(os.getenv('HOME'), '.fotonower_config/current_id_{}.txt'.format(day)), 'w') as f:
+                    f.write(datou_current_id)
+            except:
+                pass
     except Exception as e:
         print('no port, creating one')
         port_id = str(fc.create_portfolio("{}_{}".format(name,day)))
