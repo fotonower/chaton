@@ -111,7 +111,7 @@ if __name__ == "__main__":
                       default="/home/pi/.fotonower_config/sqlite.db",
                       help="local file to save stat and info in sqlite format")
     parser.add_argument("-v", "--verbose", action="store_true", dest="verbose", default=0, help=" verbose ")
-    parser.add_argument('--datou_id',action='store',dest='datou',default=0,help="datou_id to launch at upload")
+    parser.add_argument('--datou_id',action='store',dest='datou_id',default=0,help="datou_id to launch at upload")
     x = parser.parse_args()
 
     folder_local_db = x.folder_local_db
@@ -176,7 +176,7 @@ if __name__ == "__main__":
         day = current.strftime("%d%m%Y")
         hour = current.strftime("%H")
         minutes = current.strftime("%M")
-        ret = upload(folder,day,hour,minutes,x.name,fc,lsr,x.datou)
+        ret = upload(folder,day,hour,minutes,x.name,fc,lsr,x.datou_id)
         if ret != 0:
             print('we had an error with upload')
             if ret == 1:
@@ -190,7 +190,7 @@ if __name__ == "__main__":
             print("please provide a valid folder")
             exit(2)
         day = x.day
-        reupload(day,x.folder,current, lsr,x.datou)
+        reupload(day,x.folder,current, lsr,x.datou_id)
     elif x.job == "test":
         print(os.getenv('PYTHONPATH'))
         from tests.upload_test import test
