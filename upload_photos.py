@@ -17,7 +17,7 @@ def upload(folder,day,hour,minutes,name,fc,lsr,datou):
                 os.remove(os.path.join(os.getenv('HOME'), '.fotonower_config/port_id_{}.txt'.format(day)))
                 print("portfolio_id is not saved in file, deleting and exiting...")
                 exit(1)
-        with open(os.path.join(os.getenv('HOME'), '.fotonower_config/current_id_{}.txt'.format(day)), 'w') as f:
+        with open(os.path.join(os.getenv('HOME'), '.fotonower_config/current_id_{}.txt'.format(day)), 'r') as f:
             datou_current_id=f.read()
         print(datou_current_id)
         print(datou)
@@ -40,6 +40,8 @@ def upload(folder,day,hour,minutes,name,fc,lsr,datou):
                     f.write(datou_current_id)
             except:
                 pass
+            print(datou_current_id)
+            print(datou)
     if int(port_id) == 0:
         print('error with portfolio, exiting...')
         exit(1)
