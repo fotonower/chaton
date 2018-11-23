@@ -19,6 +19,8 @@ def upload(folder,day,hour,minutes,name,fc,lsr,datou):
                 exit(1)
         with open(os.path.join(os.getenv('HOME'), '.fotonower_config/current_id_{}.txt'.format(day)), 'w') as f:
             datou_current_id=f.read()
+        print(datou_current_id)
+        print(datou)
     except Exception as e:
         print('no port, creating one')
         port_id = str(fc.create_portfolio("{}_{}".format(name,day)))
