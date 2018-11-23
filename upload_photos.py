@@ -111,7 +111,7 @@ if __name__ == "__main__":
                       default="/home/pi/.fotonower_config/sqlite.db",
                       help="local file to save stat and info in sqlite format")
     parser.add_argument("-v", "--verbose", action="store_true", dest="verbose", default=0, help=" verbose ")
-    parser.add_argument('--datou',action='store',dest='datou',default=0,help="datou_id to launch at upload")
+    parser.add_argument('--datou_id',action='store',dest='datou',default=0,help="datou_id to launch at upload")
     x = parser.parse_args()
 
     folder_local_db = x.folder_local_db

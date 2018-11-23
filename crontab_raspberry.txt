@@ -30,7 +30,7 @@
 * 6-21 * * 1-5 mkdir -p $LOGFOLDER/`date "+\%Y/\%m/\%d"`/take_pic;python /home/pi//workarea/git/raspberrypi/raspberry_camera/python/main.py -f $BASEFOLDER -p $PAUSE -e $END >> $LOGFOLDER/`date "+\%Y/\%m/\%d"`/take_pic/pic_log.txt 2>&1
 
 # upload photos every minutes
-* 6-21 * * 1-5 mkdir -p $LOGFOLDER/`date "+\%Y/\%m/\%d"`/upload;python /home/pi/workarea/git/raspberrypi/upload_photos.py -n $BASENAME -u $HOST_FOTONOWER -f $BASEFOLDER -t $TOKEN >> $LOGFOLDER/`date "+\%Y/\%m/\%d"`/upload/upload_log.txt 2>&1
+* 6-21 * * 1-5 mkdir -p $LOGFOLDER/`date "+\%Y/\%m/\%d"`/upload;python /home/pi/workarea/git/raspberrypi/upload_photos.py -n $BASENAME -u $HOST_FOTONOWER -f $BASEFOLDER -t $TOKEN  --datou=$DATOU_CLASS >> $LOGFOLDER/`date "+\%Y/\%m/\%d"`/upload/upload_log.txt 2>&1
 
 # upload failed uploaded batch
 22 21 * * 1-5 mkdir -p $LOGFOLDER/`date "+\%Y/\%m/\%d"`/reupload;python /home/pi/workarea/git/raspberrypi/upload_photos.py -j reprise -n $BASENAME -u $HOST_FOTONOWER -f $BASEFOLDER -t $TOKEN   >> $LOGFOLDER/`date "+\%Y/\%m/\%d"`/reupload/reupload_log.txt 2>&1
