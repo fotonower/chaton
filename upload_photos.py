@@ -33,6 +33,7 @@ def upload(folder,day,hour,minutes,name,fc,lsr,datou):
         with open(os.path.join(os.getenv('HOME'), '.fotonower_config/port_id_{}.txt'.format(day)),'w') as f:
             f.write(port_id)
         if datou != 0:
+            print(datou)
             ret=fc.set_datou_current(int(port_id),datou)
             try :
                 datou_current_id = str(ret['id'][0])
