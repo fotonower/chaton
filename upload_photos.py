@@ -25,6 +25,8 @@ def check_pictures(folder,day,hour,minutes,lsr,threshold, factor):
             continue
         img = np.array(cv2.imread(file))
         test = np.sum(np.mean(np.mean(img, axis=0), axis=0))
+        filename = str(test) + 'm' + filename
+        new_path = os.path.join(folder, str(test) + 'm' + filename)
         if test < threshold:
             print('rewriting img, sum of mean RGB is {}'.format(test))
 
@@ -32,12 +34,14 @@ def check_pictures(folder,day,hour,minutes,lsr,threshold, factor):
 
             new_path = os.path.join(folder,str(test) + 'm' + filename)
             cv2.imwrite(new_path, res)
-            folder_deleted = os.path.join('/'.join(folder.split('/')[:-3]),"deleted/"+ '/'.join(folder.split('/')[-3:]))
+            new_folder= os.path.join('/'.join(folder.split('/')[:-3]),"deleted/"+ '/'.join(folder.split('/')[-3:]))
             try:
-                os.makedirs(folder_deleted)
+                os.makedirs(new_folder)
             except:
                 pass
-            os.rename(file,os.path.join(folder_deleted,filename))
+        else:
+            new_folder = folder
+        os.rename(file,os.path.join(new_folder,filename))
             #os.remove(file)
 def upload(folder,day,hour,minutes,name,fc,lsr,datou,threshold,factor = 0.1):
     check_pictures(folder,day,hour,minutes,lsr,threshold,factor)
