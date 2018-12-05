@@ -28,6 +28,7 @@ def check_pictures(folder,day,hour,minutes,lsr,threshold, factor):
             test = np.sum(np.mean(np.mean(img, axis=0), axis=0))
         except:
             print("erreur with numpy sum mean, uploading full image without sum")
+            print("FILENAME = {}".format(filename))
             continue
         filename = str(test) + 'm' + filename
         new_path = os.path.join(folder, str(test) + 'm' + filename)
