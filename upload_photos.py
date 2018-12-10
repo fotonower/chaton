@@ -111,7 +111,8 @@ def upload(folder,day,hour,minutes,name,fc,lsr,datou,threshold,factor = 0.1):
             print("rm")
             for photo_path in test :
                 os.remove(photo_path)
-                lsr.delete_one(photo_path)
+                if lsr:
+                    lsr.delete_one(photo_path)
             return 0
         except Exception as e:
             print("not deleting.")
