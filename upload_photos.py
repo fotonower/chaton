@@ -104,8 +104,9 @@ def upload(folder,day,hour,minutes,name,fc,lsr,datou,threshold,factor = 0.1):
                                                  verbose=False, compute_classification=True, arg_aux="",auto_treatment= False,datou_current_id = datou_current_id)
         try :
             test = map_result_insert_aux.keys()
-            for photo_path in test:
-                lsr.upload_one(photo_path,photo_id_global=map_result_insert_aux[photo_path])
+            if lsr:
+                for photo_path in test:
+                    lsr.upload_one(photo_path,photo_id_global=map_result_insert_aux[photo_path])
             print("uploaded " + str(len(map_result_insert_aux)) + " photos")
             print("rm")
             for photo_path in test :
