@@ -17,7 +17,7 @@ if len(sys.argv) > 2:
 if len(sys.argv) > 3:
     wait_for = int(sys.argv[3])
 
-def read_signal(port = 18, nb_time = 1, wait_for = 10):
+def read_signal(port = 18, nb_time = 50, wait_for = 1):
 
 	#init GPIO with BCM numberings
 	GPIO.setmode(GPIO.BCM)
