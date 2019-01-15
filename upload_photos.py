@@ -21,7 +21,7 @@ def check_pictures(folder,day,hour,minutes,lsr,threshold, factor):
     files = [os.path.join(folder, x) for x in os.listdir(folder)]
     for file in files:
         filename = file.split('/')[-1]
-        if "mimage" in filename:
+        if "L" in filename:
             continue
         img = np.array(cv2.imread(file))
         try:
@@ -30,9 +30,9 @@ def check_pictures(folder,day,hour,minutes,lsr,threshold, factor):
             print("erreur with numpy sum mean, uploading full image without sum")
             print("FILENAME = {}".format(filename))
             continue
-        filename = str(test) + 'm' + filename
+        filename = filename + 'L' + str(test)
         new_path = os.path.join(folder, str(test) + 'm' + filename)
-        if test < threshold:
+        if float(test) < float(threshold):
             print('rewriting img, sum of mean RGB is {}'.format(test))
             res = cv2.resize(img, (0, 0), fx=factor, fy=factor, interpolation=cv2.INTER_CUBIC)
             new_path = os.path.join(folder,str(test) + 'm' + filename)
@@ -106,13 +106,21 @@ def upload(folder,day,hour,minutes,name,fc,lsr,datou,threshold,factor = 0.1):
             test = map_result_insert_aux.keys()
             if lsr:
                 for photo_path in test:
-                    lsr.upload_one(photo_path,photo_id_global=map_result_insert_aux[photo_path])
+                    try:
+                        lsr.upload_one(photo_path,photo_id_global=map_result_insert_aux[photo_path])
+                    except Exception,e:
+                        print(e)
+                        print("ERROR with LSR")
             print("uploaded " + str(len(map_result_insert_aux)) + " photos")
             print("rm")
             for photo_path in test :
                 os.remove(photo_path)
                 if lsr:
-                    lsr.delete_one(photo_path)
+                    try:
+                        lsr.delete_one(photo_path)
+                    except Exception,e:
+                        print(e)
+                        print("ERROR with LSR")
             return 0
         except Exception as e:
             print("not deleting.")
