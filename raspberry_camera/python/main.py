@@ -84,6 +84,26 @@ def get_sensor_and_take_pic(rotation,gpio_pin,shutter,folder,verbose):
         if int(ret) == 0:
             take_picture(lsr, folder, camera, verbose)
 
+
+def get_sensor_card_and_take_pic(rotation,gpio_pin,shutter,folder,verbose):
+    import ads1256  # import this lib
+    ads1256.start(str(1), "25")
+    camera = ""
+    try:
+        camera = PiCamera()
+        camera.start_preview()
+        camera.rotation = rotation % 360
+        camera.shutter_speed = shutter
+        print("launching script")
+    except Exception, e:
+        print("camera allready in use")
+        exit(0)
+    while True:
+        ret = ads1256.read_channel(gpio_pin)
+        if int(ret) < 5000000:
+            take_picture(lsr, folder, camera, verbose)
+
+
 parser = OptionParser()
 parser.add_option("-f", "--folder", action="store", type="string", dest="folder", default="/home/pi/Desktop/images",
                       help="base folder where photos are saved")
@@ -129,6 +149,8 @@ if job == "take_photo": # VR 29-8-18 : I suggest to make a function of all this 
     take_pictures(lsr,x.folder, x.end, x.pause,x.shutter, x.verbose)
 elif job == 'take_photo_from_captor':
     get_sensor_and_take_pic(x.rotation, x.gpio_pin, x.shutter, x.folder, x.verbose)
+elif job == 'take_photo_from_card':
+    get_sensor_card_and_take_pic(x.rotation, x.gpio_pin, x.shutter, x.folder, x.verbose)
 else :
     print ("Job " + str(job) + " not yet implemented !")
 
