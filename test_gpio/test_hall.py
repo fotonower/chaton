@@ -45,10 +45,11 @@ print(time.strftime("%c"))
 def read_adda(port = 2, nb_times = 50, wait_for = 1):
     import ads1256  # import this lib
     ads1256.start(str(1), "25")
-    for i in range(nb_times):
+    while True:
         value = ads1256.read_channel(port)
-        print(value)
-        time.sleep(wait_for)
+        volt = (value  * 100 /167.0)/1000000.0
+        print(volt)
+        #time.sleep(wait_for)
 
-read_adda()
+read_adda(port=port)
 #read_signal(port, nb_time, wait_for)
