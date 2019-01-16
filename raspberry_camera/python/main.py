@@ -100,7 +100,7 @@ def get_sensor_card_and_take_pic(rotation,gpio_pin,shutter,folder,verbose):
         exit(0)
     while True:
         ret = ads1256.read_channel(gpio_pin)
-        if int(ret) < 5000000:
+        if int(ret) > 4000000:
             take_picture(lsr, folder, camera, verbose)
 
 
