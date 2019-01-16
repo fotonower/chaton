@@ -17,7 +17,7 @@ if len(sys.argv) > 2:
 if len(sys.argv) > 3:
     wait_for = int(sys.argv[3])
 
-def read_signal(port = 18, nb_time = 50, wait_for = 1):
+def read_signal(port = 17, nb_time = 50, wait_for = 1):
 
 	#init GPIO with BCM numberings
 	GPIO.setmode(GPIO.BCM)
@@ -41,4 +41,14 @@ def read_signal(port = 18, nb_time = 50, wait_for = 1):
         GPIO.cleanup()
 
 print(time.strftime("%c"))
-read_signal(port, nb_time, wait_for)
+
+def read_adda(port = 2, nb_times = 50, wait_for = 1):
+    import ads1256  # import this lib
+    ads1256.start(str(1), "25")
+    for i in range(nb_times):
+        value = ads1256.read_channel(port)
+        print(value)
+        time.sleep(wait_for)
+
+read_adda()
+#read_signal(port, nb_time, wait_for)
