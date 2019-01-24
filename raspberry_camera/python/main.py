@@ -26,7 +26,7 @@ def take_picture(lsr,base_folder,camera,verbose=False):
     if lsr:
         lsr.append_photo(filename)
 
-def take_pictures(lsr,base_folder,end,pause,shutter,verbose= False):
+def take_pictures(lsr,base_folder,end,pause,shutter,quality,verbose= False):
 
     camera = ""
     try:
@@ -61,7 +61,7 @@ def take_pictures(lsr,base_folder,end,pause,shutter,verbose= False):
                 os.makedirs(folder)
         last_minute = minutes
         filename = folder + '/image_{}_{}_{}_{}_{}.jpg'.format(str(day), str(hour), str(minutes), now.strftime("%S"), now.microsecond)
-        camera.capture(filename)
+        camera.capture(filename, quality=quality,thumbnail=None)
         lsr.append_photo(filename)
         sleep(pause)
 
@@ -137,6 +137,7 @@ parser.add_option("-P", "--protocol", action="store", type="string", dest="proto
 parser.add_option("-D", "--day", type='string', dest='day', default="", help="day of folder to upload")
 parser.add_option('-G', '--gpiopin', type='int',dest='gpio_pin', default=17, help="gpio pin for captor to test")
 parser.add_option('-s','--shutter_speed',dest='shutter',default=10000,type='int',help='shutter speed for camera',action='store')
+parser.add_option('-q', '--quality', dest='quality', default=100, type='int', help='compression quality for jpeg format')
 (x, args) = parser.parse_args()
 
 folder_local_db = x.folder_local_db
@@ -146,7 +147,7 @@ job = x.job
 lsr = LSR(file_local_db, folder_local_db)
 
 if job == "take_photo": # VR 29-8-18 : I suggest to make a function of all this instead of having it in the main
-    take_pictures(lsr,x.folder, x.end, x.pause,x.shutter, x.verbose)
+    take_pictures(lsr,x.folder, x.end, x.pause,x.shutter,x.quality, x.verbose)
 elif job == 'take_photo_from_captor':
     get_sensor_and_take_pic(x.rotation, x.gpio_pin, x.shutter, x.folder, x.verbose)
 elif job == 'take_photo_from_card':
