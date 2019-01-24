@@ -27,7 +27,7 @@
 
 
 # try to launch script to take picture every minutes from 6am to 10pm
-* 6-21 * * 1-5 mkdir -p $LOGFOLDER/`date "+\%Y/\%m/\%d"`/take_pic;python /home/pi//workarea/git/raspberrypi/raspberry_camera/python/main.py -f $BASEFOLDER -p $PAUSE -e $END -S $SHUTTER -q $QUALITY>> $LOGFOLDER/`date "+\%Y/\%m/\%d"`/take_pic/pic_log.txt 2>&1
+* 6-21 * * 1-5 mkdir -p $LOGFOLDER/`date "+\%Y/\%m/\%d"`/take_pic;python /home/pi//workarea/git/raspberrypi/raspberry_camera/python/main.py -f $BASEFOLDER -p $PAUSE -e $END -s $SHUTTER -q $QUALITY>> $LOGFOLDER/`date "+\%Y/\%m/\%d"`/take_pic/pic_log.txt 2>&1
 
 # upload photos every minutes
 * 6-21 * * 1-5 mkdir -p $LOGFOLDER/`date "+\%Y/\%m/\%d"`/upload;python /home/pi/workarea/git/raspberrypi/upload_photos.py -n $BASENAME -u $HOST_FOTONOWER -f $BASEFOLDER -t $TOKEN  --datou_id=$DATOU_CLASS -F $FACTOR --threshold=$THRESHOLD >> $LOGFOLDER/`date "+\%Y/\%m/\%d"`/upload/upload_log.txt 2>&1
