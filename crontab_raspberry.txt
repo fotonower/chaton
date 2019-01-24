@@ -32,6 +32,9 @@
 # upload photos every minutes
 * 6-21 * * 1-5 mkdir -p $LOGFOLDER/`date "+\%Y/\%m/\%d"`/upload;python /home/pi/workarea/git/raspberrypi/upload_photos.py -n $BASENAME -u $HOST_FOTONOWER -f $BASEFOLDER -t $TOKEN  --datou_id=$DATOU_CLASS -F $FACTOR --threshold=$THRESHOLD >> $LOGFOLDER/`date "+\%Y/\%m/\%d"`/upload/upload_log.txt 2>&1
 
+# reboot daily before reprise job
+15 22 * * * sudo reboot
+
 # upload failed uploaded batch
 22 21 * * 1-5 mkdir -p $LOGFOLDER/`date "+\%Y/\%m/\%d"`/reupload;python /home/pi/workarea/git/raspberrypi/upload_photos.py -j reprise -n $BASENAME -u $HOST_FOTONOWER -f $BASEFOLDER -t $TOKEN  --datou_id=$DATOU_CLASS -F $FACTOR --threshold=$THRESHOLD >> $LOGFOLDER/`date "+\%Y/\%m/\%d"`/reupload/reupload_log.txt 2>&1
 

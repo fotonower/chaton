@@ -114,6 +114,8 @@ def upload(folder,day,hour,minutes,name,fc,lsr,datou,threshold,factor = 0.1):
                         print(e)
                         print("ERROR with LSR")
             print("uploaded " + str(len(map_result_insert_aux)) + " photos")
+            if len(map_result_insert_aux) == 0:
+                raise ValueError("uploaded 0 photos")
             print("rm")
             for photo_path in test :
                 os.remove(photo_path)
