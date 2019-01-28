@@ -35,7 +35,7 @@ def check_pictures(folder,day,hour,minutes,lsr,threshold, factor):
         if float(test) < float(threshold):
             print('rewriting img, sum of mean RGB is {}'.format(test))
             res = cv2.resize(img, (0, 0), fx=factor, fy=factor, interpolation=cv2.INTER_CUBIC)
-            new_path = os.path.join(folder,filename.split('.')[0] +'L' +str(int(test)) + '.jpg')
+            new_path = os.path.join(folder,filename)
             cv2.imwrite(new_path, res)
             #new_folder= os.path.join('/'.join(folder.split('/')[:-3]),"deleted/"+ '/'.join(folder.split('/')[-3:]))
             #try:
@@ -44,8 +44,7 @@ def check_pictures(folder,day,hour,minutes,lsr,threshold, factor):
             #    pass
             os.remove(file)
         else:
-            new_folder = folder
-            os.rename(file,os.path.join(new_folder,filename))
+            os.rename(file,os.path.join(folder,filename))
 
 
 def upload(folder,day,hour,minutes,name,fc,lsr,datou,threshold,factor = 0.1):

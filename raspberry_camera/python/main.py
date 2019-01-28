@@ -65,7 +65,7 @@ def take_pictures(lsr,base_folder,end,pause,shutter,quality,verbose= False):
         lsr.append_photo(filename)
         sleep(pause)
 
-def get_sensor_and_take_pic(rotation,gpio_pin,shutter,folder,verbose):
+def get_sensor_and_take_pic(rotation,gpio_pin,gpio_pin2,shutter,folder,verbose):
     import RPi.GPIO as GPIO
     camera = ""
     try:
@@ -77,13 +77,21 @@ def get_sensor_and_take_pic(rotation,gpio_pin,shutter,folder,verbose):
     except Exception, e:
         print("camera allready in use")
         exit(0)
+    if gpio_pin == gpio_pin2:
+        print("ERROR : gpio_pin HALL = gpio_pin LIGHT ")
+        exit(0)
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(gpio_pin, GPIO.IN)
+    if gpio_pin2 != 0 :
+        GPIO.setup(gpio_pin2, GPIO.OUT)
     while True:
         ret = GPIO.input(gpio_pin)
         if int(ret) == 0:
+            if gpio_pin2 != 0:
+                GPIO.output(gpio_pin2, GPIO.LOW)
             take_picture(lsr, folder, camera, verbose)
-
+            if gpio_pin2 != 0:
+                GPIO.output(gpio_pin2, GPIO.HIGH)
 
 def get_sensor_card_and_take_pic(rotation,gpio_pin,shutter,folder,verbose):
     import ads1256  # import this lib
@@ -114,28 +122,23 @@ parser.add_option("-r", "--rotation", action="store", type="int", dest="rotation
 parser.add_option("-e", "--end", action="store", type="int", dest="end",
                       default=22, help="rotation of photos")
 parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=0, help=" verbose ")
-
 parser.add_option("-j", "--job", action="store", type="string", dest="job",
                       default="take_photo", help="job : take_photo(default), take_photo_from_captor,(to integrate here :) upload, upload_error, stat")
-
 parser.add_option("--folder_local_db", action="store", type="string", dest="folder_local_db", default="/home/pi/.fotonower_config",
                       help="local folder to save stat and info")
 parser.add_option("--file_local_db", action="store", type="string", dest="file_local_db", default="/home/pi/.fotonower_config/sqlite.db",
                       help="local file to save stat and info in sqlite format")
-
-
 parser.add_option("-t", "--token", action="store", type="string", dest="token",
                       default="empty_dummy", help=" token ")
-
 parser.add_option("-u", "--root_url", action="store", type="string", dest="root_url", default="vision.fotonower.com",
                       help="root_url to upload photos")
-
 parser.add_option("-d", "--datou", action="store", type="string", dest="datou",
                       default="2",help="datou id to be treated")
 parser.add_option("-P", "--protocol", action="store", type="string", dest="protocol",
                       default="https", help="http or https")
 parser.add_option("-D", "--day", type='string', dest='day', default="", help="day of folder to upload")
-parser.add_option('-G', '--gpiopin', type='int',dest='gpio_pin', default=17, help="gpio pin for captor to test")
+parser.add_option('-G', '--gpiopin', type='int',dest='gpio_pin', default=17, help="gpio pin for HALL EFFECT captor")
+parser.add_option('-H', '--gpiopin2', type='int',dest='gpio_pin2', default=0, help="gpio pin for LIGHT captor")
 parser.add_option('-s','--shutter_speed',dest='shutter',default=10000,type='int',help='shutter speed for camera',action='store')
 parser.add_option('-q', '--quality', dest='quality', default=100, type='int', help='compression quality for jpeg format')
 (x, args) = parser.parse_args()
@@ -149,7 +152,7 @@ lsr = LSR(file_local_db, folder_local_db)
 if job == "take_photo": # VR 29-8-18 : I suggest to make a function of all this instead of having it in the main
     take_pictures(lsr,x.folder, x.end, x.pause,x.shutter,x.quality, x.verbose)
 elif job == 'take_photo_from_captor':
-    get_sensor_and_take_pic(x.rotation, x.gpio_pin, x.shutter, x.folder, x.verbose)
+    get_sensor_and_take_pic(x.rotation, x.gpio_pin,x.gpio_pin2, x.shutter, x.folder, x.verbose)
 elif job == 'take_photo_from_card':
     get_sensor_card_and_take_pic(x.rotation, x.gpio_pin, x.shutter, x.folder, x.verbose)
 else :
