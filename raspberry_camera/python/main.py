@@ -90,6 +90,7 @@ def get_sensor_and_take_pic(rotation,gpio_pin,gpio_pin2,shutter,folder,verbose):
             if gpio_pin2 != 0:
                 GPIO.output(gpio_pin2, GPIO.LOW)
             take_picture(lsr, folder, camera, verbose)
+        else:
             if gpio_pin2 != 0:
                 GPIO.output(gpio_pin2, GPIO.HIGH)
 

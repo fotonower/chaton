@@ -22,6 +22,7 @@ def check_pictures(folder,day,hour,minutes,lsr,threshold, factor):
     for file in files:
         filename = file.split('/')[-1]
         if "L" in filename:
+            print("image allready parsed")
             continue
         img = np.array(cv2.imread(file))
         try:
@@ -30,7 +31,7 @@ def check_pictures(folder,day,hour,minutes,lsr,threshold, factor):
             print("erreur with numpy sum mean, uploading full image without sum")
             print("FILENAME = {}".format(filename))
             continue
-        filename = filename.split('.')[0] +'L' +str(int(test)) + '.jpg'
+        filename = '.'.join(filename.split('.')[:-1]) +'L' +str(int(test)) + '.jpg'
         #new_path = os.path.join(folder, str(test) + 'm' + filename)
         if float(test) < float(threshold):
             print('rewriting img, sum of mean RGB is {}'.format(test))
