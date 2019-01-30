@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+if [ -z "$1" ]
+then
+echo "please provide a job : convoyeur, benne"
+else
+
 echo "updating fotonower package"
 sudo pip install --upgrade fotonower
 echo "installing pip depandencies"
@@ -13,8 +18,9 @@ if [[ "$?" -ne 0 ]];then
 fi
 echo "backuping current crontab"
 crontab -l > crontab.backup.`date "+%Y%m%d%H_%M"`
-echo "creating new crontab file with config.txt"
-cat config.txt crontab_raspberry.txt > crontab.txt
-echo "you need now to source crontab with crontab crontab.txt"
 
+echo "creating new crontab file with config.txt and crontab_raspberry_"$1".txt"
+cat config.txt crontab_raspberry_$1.txt > crontab.txt
+echo "you need now to source crontab with crontab crontab.txt"
+fi
 #crontab crontab.txt

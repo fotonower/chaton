@@ -5,7 +5,7 @@
 # to update crontab, you must execute make_cron.sh after modifying config.txt
 #
 
-PORT = 19998
+PORT=19998
 PAUSE=15
 END=22
 TOKEN=YOUR_TOKEN
@@ -19,3 +19,6 @@ FACTOR=0.1
 THRESHOLD=120
 #85 is default quality compression with picamera module
 QUALITY=85
+GPIOPIN1=17
+GPIOPIN2=0
+DATOU_ID_2=1038
