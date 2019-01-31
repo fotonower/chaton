@@ -11,4 +11,4 @@ myrecording = sd.rec(int(duration * fs), samplerate=fs, channels=1)
 #myrecording = sd.rec(int(duration * fs))
 sd.wait()
 
-write('test.wav', 44100, myrecording)
+write('test.wav', fs, myrecording)
