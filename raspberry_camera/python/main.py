@@ -137,10 +137,10 @@ def get_sensor_and_take_pic(rotation,gpio_pin,gpio_pin2,shutter,folder,verbose,d
                 day = now.strftime("%d%m%Y")
                 hour = now.strftime("%H")
                 minutes = now.strftime("%M")
-                folder = os.path.join(folder, '{}/{}/{}'.format(str(day), str(hour), str(minutes)))
-                if not os.path.exists(folder):
-                    os.makedirs(folder)
-                filename = folder + '/sound_{}_{}_{}_{}_{}.wav'.format(str(day), str(hour), str(minutes),
+                new_folder = os.path.join(folder, '{}/{}/{}'.format(str(day), str(hour), str(minutes)))
+                if not os.path.exists(new_folder):
+                    os.makedirs(new_folder)
+                filename = new_folder + '/sound_{}_{}_{}_{}_{}.wav'.format(str(day), str(hour), str(minutes),
                                                                        now.strftime("%S"),
                                                                        now.microsecond)
                 if verbose:
