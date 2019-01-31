@@ -114,7 +114,7 @@ def get_sensor_and_take_pic(rotation,gpio_pin,gpio_pin2,shutter,folder,verbose,d
         GPIO.setup(gpio_pin2, GPIO.OUT)
     start = time.time()
     now = datetime.now()
-    print(now.strftime("%d%m%Y_%H_%M_%S_")+ "" + now.microsecond)
+    print(now.strftime("%d%m%Y_%H_%M_%S_")+ "" + str(now.microsecond))
     if sd:
         record = start_record_sound(duration,sd,fs,verbose)
     while True:
