@@ -72,7 +72,7 @@ def start_record_sound(duration,sd,fs=44100,verbose=False):
     return myrecording
 
 def stop_rec_and_save(myrecording,base_folder,sd,write,fs=44100,verbose=False):
-    sd.stop()
+    sd.wait()
     now = datetime.now()
     day = now.strftime("%d%m%Y")
     hour = now.strftime("%H")
@@ -89,12 +89,7 @@ def stop_rec_and_save(myrecording,base_folder,sd,write,fs=44100,verbose=False):
 
 def get_sensor_and_take_pic(rotation,gpio_pin,gpio_pin2,shutter,folder,verbose,duration=60,fs=44100):
     import RPi.GPIO as GPIO
-    import time
-    try:
-        import sounddevice as sd
-        from scipy.io.wavfile import write
-    except Exception, e:
-        sd = None
+
     camera = ""
     try:
         camera = PiCamera()
@@ -112,13 +107,7 @@ def get_sensor_and_take_pic(rotation,gpio_pin,gpio_pin2,shutter,folder,verbose,d
     GPIO.setup(gpio_pin, GPIO.IN)
     if gpio_pin2 != 0 :
         GPIO.setup(gpio_pin2, GPIO.OUT)
-    start = time.time()
-    now = datetime.now()
-    print(now.strftime("%d%m%Y_%H_%M_%S_")+ "" + str(now.microsecond))
-    if sd:
-        if verbose:
-            print("starting recording")
-        myrecording = sd.rec(int(duration * fs), samplerate=fs, channels=1)
+
     while True:
         ret = GPIO.input(gpio_pin)
         if int(ret) == 1:
@@ -128,26 +117,6 @@ def get_sensor_and_take_pic(rotation,gpio_pin,gpio_pin2,shutter,folder,verbose,d
         else:
             if gpio_pin2 != 0:
                 GPIO.output(gpio_pin2, GPIO.HIGH)
-        if sd:
-            if time.time() >= start + duration:
-                now = datetime.now()
-                print("starting dumping "+now.strftime("%d%m%Y_%H_%M_%S_") + "" + str(now.microsecond))
-                sd.stop()
-                now = datetime.now()
-                day = now.strftime("%d%m%Y")
-                hour = now.strftime("%H")
-                minutes = now.strftime("%M")
-                new_folder = os.path.join(folder, '{}/{}/{}'.format(str(day), str(hour), str(minutes)))
-                if not os.path.exists(new_folder):
-                    os.makedirs(new_folder)
-                filename = new_folder + '/sound_{}_{}_{}_{}_{}.wav'.format(str(day), str(hour), str(minutes),
-                                                                       now.strftime("%S"),
-                                                                       now.microsecond)
-                if verbose:
-                    print("dumping sound into {}".format(filename))
-                write(filename, fs, myrecording)
-                start = time.time()
-                myrecording = sd.rec(int(duration * fs), samplerate=fs, channels=1)
 
 def get_sensor_card_and_take_pic(rotation,gpio_pin,shutter,folder,verbose):
     import ads1256  # import this lib
@@ -167,53 +136,78 @@ def get_sensor_card_and_take_pic(rotation,gpio_pin,shutter,folder,verbose):
         if int(ret) > 4000000:
             take_picture(lsr, folder, camera, verbose)
 
+def get_sound(base_folder,duration,fs,verbose):
+    try:
+        import sounddevice as sd
+        from scipy.io.wavfile import write
+    except Exception, e:
+        print("lib not installed")
+        exit(1)
+    while True:
+        myrecording = sd.rec(int(duration * fs), samplerate=fs, channels=1)
+        sd.wait()
+        now = datetime.now()
+        day = now.strftime("%d%m%Y")
+        hour = now.strftime("%H")
+        minutes = now.strftime("%M")
+        folder = os.path.join(base_folder, '{}/{}/{}'.format(str(day), str(hour), str(minutes)))
+        if not os.path.exists(folder):
+            os.makedirs(folder)
+        filename = folder + '/sound_{}_{}_{}_{}_{}.wav'.format(str(day), str(hour), str(minutes), now.strftime("%S"),
+                                                               now.microsecond)
+        if verbose:
+            print("dumping sound into {}".format(filename))
+        write(filename, fs, myrecording)
 
-parser = OptionParser()
-parser.add_option("-f", "--folder", action="store", type="string", dest="folder", default="/home/pi/Desktop/images",
-                      help="base folder where photos are saved")
-parser.add_option("-p", "--pause", action="store", type="float", dest="pause",
-                      default=1.0, help="interval between photos")
-parser.add_option("-r", "--rotation", action="store", type="int", dest="rotation",
-                      default=180, help="rotation of photos")
-parser.add_option("-e", "--end", action="store", type="int", dest="end",
-                      default=22, help="rotation of photos")
-parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=0, help=" verbose ")
-parser.add_option("-j", "--job", action="store", type="string", dest="job",
-                      default="take_photo", help="job : take_photo(default), take_photo_from_captor,(to integrate here :) upload, upload_error, stat")
-parser.add_option("--folder_local_db", action="store", type="string", dest="folder_local_db", default="/home/pi/.fotonower_config",
-                      help="local folder to save stat and info")
-parser.add_option("--file_local_db", action="store", type="string", dest="file_local_db", default="/home/pi/.fotonower_config/sqlite.db",
-                      help="local file to save stat and info in sqlite format")
-parser.add_option("-t", "--token", action="store", type="string", dest="token",
-                      default="empty_dummy", help=" token ")
-parser.add_option("-u", "--root_url", action="store", type="string", dest="root_url", default="vision.fotonower.com",
-                      help="root_url to upload photos")
-parser.add_option("-d", "--datou", action="store", type="string", dest="datou",
-                      default="2",help="datou id to be treated")
-parser.add_option("-P", "--protocol", action="store", type="string", dest="protocol",
-                      default="https", help="http or https")
-parser.add_option("-D", "--day", type='string', dest='day', default="", help="day of folder to upload")
-parser.add_option('-G', '--gpiopin', type='int',dest='gpio_pin', default=17, help="gpio pin for HALL EFFECT captor")
-parser.add_option('-H', '--gpiopin2', type='int',dest='gpio_pin2', default=0, help="gpio pin for LIGHT captor")
-parser.add_option('-s','--shutter_speed',dest='shutter',default=10000,type='int',help='shutter speed for camera',action='store')
-parser.add_option('-q', '--quality', dest='quality', default=100, type='int', help='compression quality for jpeg format')
-parser.add_option('--duration', dest='duration',default=60,type='int',help='duration for sound recording')
-parser.add_option('--fs',dest='fs',default=44100,type='int',help='sound frequency')
-(x, args) = parser.parse_args()
+if __name__ == "__main__":
+    parser = OptionParser()
+    parser.add_option("-f", "--folder", action="store", type="string", dest="folder", default="/home/pi/Desktop/images",
+                          help="base folder where photos are saved")
+    parser.add_option("-p", "--pause", action="store", type="float", dest="pause",
+                          default=1.0, help="interval between photos")
+    parser.add_option("-r", "--rotation", action="store", type="int", dest="rotation",
+                          default=180, help="rotation of photos")
+    parser.add_option("-e", "--end", action="store", type="int", dest="end",
+                          default=22, help="rotation of photos")
+    parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=0, help=" verbose ")
+    parser.add_option("-j", "--job", action="store", type="string", dest="job",
+                          default="take_photo", help="job : take_photo(default), take_photo_from_captor,get_sound,(to integrate here :) upload, upload_error, stat")
+    parser.add_option("--folder_local_db", action="store", type="string", dest="folder_local_db", default="/home/pi/.fotonower_config",
+                          help="local folder to save stat and info")
+    parser.add_option("--file_local_db", action="store", type="string", dest="file_local_db", default="/home/pi/.fotonower_config/sqlite.db",
+                          help="local file to save stat and info in sqlite format")
+    parser.add_option("-t", "--token", action="store", type="string", dest="token",
+                          default="empty_dummy", help=" token ")
+    parser.add_option("-u", "--root_url", action="store", type="string", dest="root_url", default="vision.fotonower.com",
+                          help="root_url to upload photos")
+    parser.add_option("-d", "--datou", action="store", type="string", dest="datou",
+                          default="2",help="datou id to be treated")
+    parser.add_option("-P", "--protocol", action="store", type="string", dest="protocol",
+                          default="https", help="http or https")
+    parser.add_option("-D", "--day", type='string', dest='day', default="", help="day of folder to upload")
+    parser.add_option('-G', '--gpiopin', type='int',dest='gpio_pin', default=17, help="gpio pin for HALL EFFECT captor")
+    parser.add_option('-H', '--gpiopin2', type='int',dest='gpio_pin2', default=0, help="gpio pin for LIGHT captor")
+    parser.add_option('-s','--shutter_speed',dest='shutter',default=10000,type='int',help='shutter speed for camera',action='store')
+    parser.add_option('-q', '--quality', dest='quality', default=100, type='int', help='compression quality for jpeg format')
+    parser.add_option('--duration', dest='duration',default=60,type='int',help='duration for sound recording')
+    parser.add_option('--fs',dest='fs',default=44100,type='int',help='sound frequency')
+    (x, args) = parser.parse_args()
 
-folder_local_db = x.folder_local_db
-file_local_db = x.file_local_db
-job = x.job
+    folder_local_db = x.folder_local_db
+    file_local_db = x.file_local_db
+    job = x.job
 
-lsr = LSR(file_local_db, folder_local_db)
+    lsr = LSR(file_local_db, folder_local_db)
 
-if job == "take_photo": # VR 29-8-18 : I suggest to make a function of all this instead of having it in the main
-    take_pictures(lsr,x.folder, x.end, x.pause,x.shutter,x.quality, x.verbose)
-elif job == 'take_photo_from_captor':
-    get_sensor_and_take_pic(x.rotation, x.gpio_pin,x.gpio_pin2, x.shutter, x.folder, x.verbose, x.duration)
-elif job == 'take_photo_from_card':
-    get_sensor_card_and_take_pic(x.rotation, x.gpio_pin, x.shutter, x.folder, x.verbose)
-else :
-    print ("Job " + str(job) + " not yet implemented !")
+    if job == "take_photo": # VR 29-8-18 : I suggest to make a function of all this instead of having it in the main
+        take_pictures(lsr,x.folder, x.end, x.pause,x.shutter,x.quality, x.verbose)
+    elif job == 'take_photo_from_captor':
+        get_sensor_and_take_pic(x.rotation, x.gpio_pin,x.gpio_pin2, x.shutter, x.folder, x.verbose, x.duration)
+    elif job == 'take_photo_from_card':
+        get_sensor_card_and_take_pic(x.rotation, x.gpio_pin, x.shutter, x.folder, x.verbose)
+    elif job == 'get_sound':
+        get_sound(x.folder,x.duration,x.fs,x.verbose)
+    else :
+        print ("Job " + str(job) + " not yet implemented !")
 
 
