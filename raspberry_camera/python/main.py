@@ -193,7 +193,7 @@ lsr = LSR(file_local_db, folder_local_db)
 if job == "take_photo": # VR 29-8-18 : I suggest to make a function of all this instead of having it in the main
     take_pictures(lsr,x.folder, x.end, x.pause,x.shutter,x.quality, x.verbose)
 elif job == 'take_photo_from_captor':
-    get_sensor_and_take_pic(x.rotation, x.gpio_pin,x.gpio_pin2, x.shutter, x.folder, x.verbose)
+    get_sensor_and_take_pic(x.rotation, x.gpio_pin,x.gpio_pin2, x.shutter, x.folder, x.verbose, x.duration)
 elif job == 'take_photo_from_card':
     get_sensor_card_and_take_pic(x.rotation, x.gpio_pin, x.shutter, x.folder, x.verbose)
 else :
