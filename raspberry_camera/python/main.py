@@ -71,8 +71,17 @@ def start_record_sound(duration,sd,fs=44100,verbose=False):
     myrecording = sd.rec(int(duration * fs), samplerate=fs, channels=1)
     return myrecording
 
-def stop_rec_and_save(myrecording,filename,sd,write,fs=44100,verbose=False):
+def stop_rec_and_save(myrecording,base_folder,sd,write,fs=44100,verbose=False):
     sd.wait()
+    now = datetime.now()
+    day = now.strftime("%d%m%Y")
+    hour = now.strftime("%H")
+    minutes = now.strftime("%M")
+    folder = os.path.join(base_folder, '{}/{}/{}'.format(str(day), str(hour), str(minutes)))
+    if not os.path.exists(folder):
+        os.makedirs(folder)
+    filename = folder + '/sound_{}_{}_{}_{}_{}.wav'.format(str(day), str(hour), str(minutes), now.strftime("%S"),
+                                                           now.microsecond)
     if verbose:
         print("dumping sound into {}".format(filename))
     write(filename, fs, myrecording)
@@ -118,7 +127,7 @@ def get_sensor_and_take_pic(rotation,gpio_pin,gpio_pin2,shutter,folder,verbose,d
                 GPIO.output(gpio_pin2, GPIO.HIGH)
         if sd:
             if time.time() >= start + duration:
-                stop_rec_and_save(record,"test",sd,write,fs,verbose)
+                stop_rec_and_save(record,folder,sd,write,fs,verbose)
                 start = time.time()
                 record = start_record_sound(duration, sd, fs, verbose)
 
