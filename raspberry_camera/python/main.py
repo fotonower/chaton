@@ -65,8 +65,27 @@ def take_pictures(lsr,base_folder,end,pause,shutter,quality,verbose= False):
         lsr.append_photo(filename)
         sleep(pause)
 
-def get_sensor_and_take_pic(rotation,gpio_pin,gpio_pin2,shutter,folder,verbose):
+def start_record_sound(duration,sd,fs=44100,verbose=False):
+    if verbose:
+        print("starting recording")
+    myrecording = sd.rec(int(duration * fs), samplerate=fs, channels=1)
+    return myrecording
+
+def stop_rec_and_save(myrecording,filename,sd,write,fs=44100,verbose=False):
+    sd.wait()
+    if verbose:
+        print("dumping sound into {}".format(filename))
+    write(filename, fs, myrecording)
+
+
+def get_sensor_and_take_pic(rotation,gpio_pin,gpio_pin2,shutter,folder,verbose,duration=60,fs=44100):
     import RPi.GPIO as GPIO
+    import time
+    try:
+        import sounddevice as sd
+        from scipy.io.wavfile import write
+    except Exception, e:
+        sd = None
     camera = ""
     try:
         camera = PiCamera()
@@ -84,6 +103,9 @@ def get_sensor_and_take_pic(rotation,gpio_pin,gpio_pin2,shutter,folder,verbose):
     GPIO.setup(gpio_pin, GPIO.IN)
     if gpio_pin2 != 0 :
         GPIO.setup(gpio_pin2, GPIO.OUT)
+    start = time.time()
+    if sd:
+        record = start_record_sound(duration,sd,fs,verbose)
     while True:
         ret = GPIO.input(gpio_pin)
         if int(ret) == 0:
@@ -93,6 +115,11 @@ def get_sensor_and_take_pic(rotation,gpio_pin,gpio_pin2,shutter,folder,verbose):
         else:
             if gpio_pin2 != 0:
                 GPIO.output(gpio_pin2, GPIO.HIGH)
+        if sd:
+            if time.time() >= start + duration:
+                stop_rec_and_save(record,"test",sd,write,fs,verbose)
+                start = time.time()
+                record = start_record_sound(duration, sd, fs, verbose)
 
 def get_sensor_card_and_take_pic(rotation,gpio_pin,shutter,folder,verbose):
     import ads1256  # import this lib
