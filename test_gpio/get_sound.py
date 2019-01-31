@@ -1,39 +1,11 @@
-import pyaudio
-import wave
+import sounddevice as sd
+import numpy as np
 
-CHUNK = 1024
-FORMAT = pyaudio.paInt16 #paInt8
-CHANNELS = 2
-RATE = 88200 #sample rate
-RECORD_SECONDS = 5
-WAVE_OUTPUT_FILENAME = "output.wav"
+fs = 44100
 
-p = pyaudio.PyAudio()
 
-stream = p.open(format=FORMAT,
-                channels=CHANNELS,
-                rate=RATE,
-                input=True,
-                frames_per_buffer=CHUNK) #buffer
+duration = 10.5  # seconds
+myrecording = sd.rec(int(duration * fs), samplerate=fs, channels=2)
 
-print("* recording")
-
-frames = []
-
-for i in range(0, int(RATE / CHUNK * RECORD_SECONDS)):
-    data = stream.read(CHUNK)
-    frames.append(data) # 2 bytes(16 bits) per channel
-
-print("* done recording")
-
-stream.stop_stream()
-stream.close()
-p.terminate()
-
-wf = wave.open(WAVE_OUTPUT_FILENAME, 'wb')
-wf.setnchannels(CHANNELS)
-wf.setsampwidth(p.get_sample_size(FORMAT))
-wf.setframerate(RATE)
-wf.writeframes(b''.join(frames))
-wf.close()
-    
+myrecording = sd.rec(int(duration * fs))
+sd.wait()
