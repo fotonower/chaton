@@ -72,7 +72,7 @@ def start_record_sound(duration,sd,fs=44100,verbose=False):
     return myrecording
 
 def stop_rec_and_save(myrecording,base_folder,sd,write,fs=44100,verbose=False):
-    sd.wait()
+    sd.stop()
     now = datetime.now()
     day = now.strftime("%d%m%Y")
     hour = now.strftime("%H")
