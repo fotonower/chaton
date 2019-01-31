@@ -128,6 +128,8 @@ def get_sensor_and_take_pic(rotation,gpio_pin,gpio_pin2,shutter,folder,verbose,d
                 GPIO.output(gpio_pin2, GPIO.HIGH)
         if sd:
             if time.time() >= start + duration:
+                now = datetime.now()
+                print("starting dumping "+now.strftime("%d%m%Y_%H_%M_%S_") + "" + str(now.microsecond))
                 stop_rec_and_save(record,folder,sd,write,fs,verbose)
                 start = time.time()
                 record = start_record_sound(duration, sd, fs, verbose)
