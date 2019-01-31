@@ -180,6 +180,8 @@ parser.add_option('-G', '--gpiopin', type='int',dest='gpio_pin', default=17, hel
 parser.add_option('-H', '--gpiopin2', type='int',dest='gpio_pin2', default=0, help="gpio pin for LIGHT captor")
 parser.add_option('-s','--shutter_speed',dest='shutter',default=10000,type='int',help='shutter speed for camera',action='store')
 parser.add_option('-q', '--quality', dest='quality', default=100, type='int', help='compression quality for jpeg format')
+parser.add_option('--duration', dest='duration',default=60,type='int',help='duration for sound recording')
+parser.add_option('--fs',dest='fs',default=44100,type='int',help='sound frequency')
 (x, args) = parser.parse_args()
 
 folder_local_db = x.folder_local_db
