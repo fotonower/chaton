@@ -108,7 +108,7 @@ def get_sensor_and_take_pic(rotation,gpio_pin,gpio_pin2,shutter,folder,verbose,d
         record = start_record_sound(duration,sd,fs,verbose)
     while True:
         ret = GPIO.input(gpio_pin)
-        if int(ret) == 0:
+        if int(ret) == 1:
             if gpio_pin2 != 0:
                 GPIO.output(gpio_pin2, GPIO.LOW)
             take_picture(lsr, folder, camera, verbose)
