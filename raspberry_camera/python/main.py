@@ -116,7 +116,9 @@ def get_sensor_and_take_pic(rotation,gpio_pin,gpio_pin2,shutter,folder,verbose,d
     now = datetime.now()
     print(now.strftime("%d%m%Y_%H_%M_%S_")+ "" + str(now.microsecond))
     if sd:
-        record = start_record_sound(duration,sd,fs,verbose)
+        if verbose:
+            print("starting recording")
+        myrecording = sd.rec(int(duration * fs), samplerate=fs, channels=1)
     while True:
         ret = GPIO.input(gpio_pin)
         if int(ret) == 1:
@@ -130,9 +132,22 @@ def get_sensor_and_take_pic(rotation,gpio_pin,gpio_pin2,shutter,folder,verbose,d
             if time.time() >= start + duration:
                 now = datetime.now()
                 print("starting dumping "+now.strftime("%d%m%Y_%H_%M_%S_") + "" + str(now.microsecond))
-                stop_rec_and_save(record,folder,sd,write,fs,verbose)
+                sd.stop()
+                now = datetime.now()
+                day = now.strftime("%d%m%Y")
+                hour = now.strftime("%H")
+                minutes = now.strftime("%M")
+                folder = os.path.join(folder, '{}/{}/{}'.format(str(day), str(hour), str(minutes)))
+                if not os.path.exists(folder):
+                    os.makedirs(folder)
+                filename = folder + '/sound_{}_{}_{}_{}_{}.wav'.format(str(day), str(hour), str(minutes),
+                                                                       now.strftime("%S"),
+                                                                       now.microsecond)
+                if verbose:
+                    print("dumping sound into {}".format(filename))
+                write(filename, fs, myrecording)
                 start = time.time()
-                record = start_record_sound(duration, sd, fs, verbose)
+                myrecording = sd.rec(int(duration * fs), samplerate=fs, channels=1)
 
 def get_sensor_card_and_take_pic(rotation,gpio_pin,shutter,folder,verbose):
     import ads1256  # import this lib
