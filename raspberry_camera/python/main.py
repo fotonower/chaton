@@ -65,27 +65,6 @@ def take_pictures(lsr,base_folder,end,pause,shutter,quality,verbose= False):
         lsr.append_photo(filename)
         sleep(pause)
 
-def start_record_sound(duration,sd,fs=44100,verbose=False):
-    if verbose:
-        print("starting recording")
-    myrecording = sd.rec(int(duration * fs), samplerate=fs, channels=1)
-    return myrecording
-
-def stop_rec_and_save(myrecording,base_folder,sd,write,fs=44100,verbose=False):
-    sd.wait()
-    now = datetime.now()
-    day = now.strftime("%d%m%Y")
-    hour = now.strftime("%H")
-    minutes = now.strftime("%M")
-    folder = os.path.join(base_folder, '{}/{}/{}'.format(str(day), str(hour), str(minutes)))
-    if not os.path.exists(folder):
-        os.makedirs(folder)
-    filename = folder + '/sound_{}_{}_{}_{}_{}.wav'.format(str(day), str(hour), str(minutes), now.strftime("%S"),
-                                                           now.microsecond)
-    if verbose:
-        print("dumping sound into {}".format(filename))
-    write(filename, fs, myrecording)
-
 
 def get_sensor_and_take_pic(rotation,gpio_pin,gpio_pin2,shutter,folder,verbose,duration=60,fs=44100):
     import RPi.GPIO as GPIO

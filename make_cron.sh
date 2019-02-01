@@ -9,6 +9,8 @@ echo "updating fotonower package"
 sudo pip install --upgrade fotonower
 echo "installing pip depandencies"
 sudo pip install psutil
+sudo apt-get install python-cffi
+sudo pip install sounddevice
 echo "checking sqlite"
 echo "select day_taken_at as d, substr(hour_taken_at, 0, 3) as h, count(*) from mra_photos group by d, h;" | sqlite3 /home/pi/.fotonower_config/sqlite.db
 if [[ "$?" -ne 0 ]];then
