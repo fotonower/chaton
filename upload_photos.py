@@ -180,6 +180,9 @@ if __name__ == "__main__":
     parser.add_argument('--datou_id',action='store',dest='datou_id',default=533,help="datou_id to launch at upload")
     parser.add_argument('--threshold', action='store',default=120,type=int,help='threshold for mean rgb filter',dest='threshold')
     parser.add_argument('-F','--factor', action='store',default=0.1,type=float,dest='factor',help='factor to resize under threshold image img')
+    parser.add_argument('-m', '--media', action='store_true', default=False, dest='media',
+                        help='if true images to upload on external device')
+
     x = parser.parse_args()
 
     folder_local_db = x.folder_local_db
@@ -218,6 +221,13 @@ if __name__ == "__main__":
         return test
 
 
+    folder = x.folder
+    if x.media:
+        list_medias = os.listdir("/media/pi")
+        if len(list_medias) > 0:
+            print("taking first media in {}").format(list_medias[0])
+            temp = os.join("/media/pi",list_medias[0])
+            folder = os.join(temp,"images")
 
     current = datetime.datetime.now() - datetime.timedelta(minutes=1)
     print(current)
@@ -237,10 +247,9 @@ if __name__ == "__main__":
         if test > 5:
             print("too many processes, exiting")
             exit(3)
-        if not os.path.isdir(x.folder):
+        if not os.path.isdir(folder):
             print("please provide a valid folder")
             exit(2)
-        folder = x.folder
         day = current.strftime("%d%m%Y")
         hour = current.strftime("%H")
         minutes = current.strftime("%M")
@@ -254,11 +263,11 @@ if __name__ == "__main__":
             elif ret == -1:
                 print("error is from upload on API")
     elif x.job == "reprise":
-        if not os.path.isdir(x.folder):
+        if not os.path.isdir(folder):
             print("please provide a valid folder")
             exit(2)
         day = x.day
-        reupload(day,x.folder,current, lsr,x.datou_id,x.threshold,x.factor)
+        reupload(day,folder,current, lsr,x.datou_id,x.threshold,x.factor)
     elif x.job == "test":
         print(os.getenv('PYTHONPATH'))
         from tests.upload_test import test

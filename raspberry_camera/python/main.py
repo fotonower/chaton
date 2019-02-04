@@ -170,6 +170,8 @@ if __name__ == "__main__":
     parser.add_option('-q', '--quality', dest='quality', default=100, type='int', help='compression quality for jpeg format')
     parser.add_option('--duration', dest='duration',default=60,type='int',help='duration for sound recording')
     parser.add_option('--fs',dest='fs',default=44100,type='int',help='sound frequency')
+    parser.add_argument('-m', '--media', action='store_true', default=False, dest='media',
+                        help='if true images to upload on external device')
     (x, args) = parser.parse_args()
 
     folder_local_db = x.folder_local_db
@@ -177,15 +179,26 @@ if __name__ == "__main__":
     job = x.job
 
     lsr = LSR(file_local_db, folder_local_db)
+    folder = x.folder
+    if x.media:
+        list_medias = os.listdir("/media/pi")
+        if len(list_medias) > 0:
+            print("taking first media in {}").format(list_medias[0])
+            temp = os.join("/media/pi",list_medias[0])
+            folder = os.join(temp,"images")
+            try:
+                os.makedirs(folder)
+            except Exception, e:
+                pass
 
     if job == "take_photo": # VR 29-8-18 : I suggest to make a function of all this instead of having it in the main
-        take_pictures(lsr,x.folder, x.end, x.pause,x.shutter,x.quality, x.verbose)
+        take_pictures(lsr,folder, x.end, x.pause,x.shutter,x.quality, x.verbose)
     elif job == 'take_photo_from_captor':
-        get_sensor_and_take_pic(x.rotation, x.gpio_pin,x.gpio_pin2, x.shutter, x.folder, x.verbose, x.duration)
+        get_sensor_and_take_pic(x.rotation, x.gpio_pin,x.gpio_pin2, x.shutter, folder, x.verbose, x.duration)
     elif job == 'take_photo_from_card':
-        get_sensor_card_and_take_pic(x.rotation, x.gpio_pin, x.shutter, x.folder, x.verbose)
+        get_sensor_card_and_take_pic(x.rotation, x.gpio_pin, x.shutter, folder, x.verbose)
     elif job == 'get_sound':
-        get_sound(x.folder,x.duration,x.fs,x.verbose)
+        get_sound(folder,x.duration,x.fs,x.verbose)
     else :
         print ("Job " + str(job) + " not yet implemented !")
 
