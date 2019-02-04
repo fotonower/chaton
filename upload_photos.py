@@ -226,8 +226,8 @@ if __name__ == "__main__":
         list_medias = os.listdir("/media/pi")
         if len(list_medias) > 0:
             print("taking first media in {}").format(list_medias[0])
-            temp = os.join("/media/pi",list_medias[0])
-            folder = os.join(temp,"images")
+            temp = os.path.join("/media/pi",list_medias[0])
+            folder = os.path.join(temp,"images")
 
     current = datetime.datetime.now() - datetime.timedelta(minutes=1)
     print(current)
