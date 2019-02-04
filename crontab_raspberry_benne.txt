@@ -26,7 +26,7 @@
 * * * * * mkdir -p $LOGFOLDER/`date "+\%Y/\%m/\%d"`/tunnel_ssh;/home/pi/workarea/git/raspberrypi/tunnel_ssh.sh $PORT >> $LOGFOLDER/`date "+\%Y/\%m/\%d"`/tunnel_ssh/ssh_log.txt 2>&1
 
 # try to launch script to take picture every minutes from 5:30am to 10pm
-* * * * * mkdir -p $LOGFOLDER/`date "+\%Y/\%m/\%d"`/take_pic;python /home/pi//workarea/git/raspberrypi/raspberry_camera/python/main.py -f $BASEFOLDER -s $SHUTTER -q $QUALITY -j take_photo_from_captor -G $GPIOPIN1 -H $GPIOPIN2 >> $LOGFOLDER/`date "+\%Y/\%m/\%d"`/take_pic/pic_log.txt 2>&1
+* * * * * mkdir -p $LOGFOLDER/`date "+\%Y/\%m/\%d"`/take_pic;python /home/pi/workarea/git/raspberrypi/raspberry_camera/python/main.py -m -f $BASEFOLDER -s $SHUTTER -q $QUALITY -j take_photo_from_captor -G $GPIOPIN1 -H $GPIOPIN2 >> $LOGFOLDER/`date "+\%Y/\%m/\%d"`/take_pic/pic_log.txt 2>&1
 
 # ps and uptime in a file
 * * * * * mkdir -p $LOGFOLDER/`date "+\%Y/\%m/\%d"`/ps_log;uptime >> $LOGFOLDER/`date "+\%Y/\%m/\%d"`/ps_log/ps_log.txt;ps -aef | wc -l >> $LOGFOLDER/`date "+\%Y/\%m/\%d"`/ps_log/ps_log.txt
