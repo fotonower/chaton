@@ -225,7 +225,7 @@ if __name__ == "__main__":
     elif job == 'get_sound':
         get_sound(folder,x.duration,x.fs,x.verbose)
     elif job == 'test':
-        test(folder,x.duration,x.fs,x.verbose)
+        test(x.rotation, x.gpio_pin,x.gpio_pin2, x.shutter, folder, x.verbose, x.duration)
     else :
         print ("Job " + str(job) + " not yet implemented !")
 
