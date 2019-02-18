@@ -66,6 +66,31 @@ def take_pictures(lsr,base_folder,end,pause,shutter,quality,verbose= False):
         sleep(pause)
 
 
+def test(rotation,gpio_pin,gpio_pin2,shutter,folder,verbose,delay=60,fs=44100):
+    import RPi.GPIO as GPIO
+    import time
+    camera = ""
+    try:
+        camera = PiCamera()
+        camera.start_preview()
+        camera.rotation = rotation % 360
+        camera.shutter_speed = shutter
+        print("launching script")
+    except Exception, e:
+        print("camera allready in use")
+        exit(0)
+    if gpio_pin == gpio_pin2:
+        print("ERROR : gpio_pin HALL = gpio_pin LIGHT ")
+        exit(0)
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(gpio_pin2, GPIO.OUT)
+    while True:
+        GPIO.output(gpio_pin2, GPIO.LOW)
+        for i in range(0,50):
+            take_picture(lsr, folder, camera, verbose)
+        GPIO.output(gpio_pin2, GPIO.HIGH)
+        time.sleep(25)
+
 def get_sensor_and_take_pic(rotation,gpio_pin,gpio_pin2,shutter,folder,verbose,duration=60,fs=44100):
     import RPi.GPIO as GPIO
 
@@ -198,6 +223,8 @@ if __name__ == "__main__":
     elif job == 'take_photo_from_card':
         get_sensor_card_and_take_pic(x.rotation, x.gpio_pin, x.shutter, folder, x.verbose)
     elif job == 'get_sound':
+        get_sound(folder,x.duration,x.fs,x.verbose)
+    elif job == 'test':
         get_sound(folder,x.duration,x.fs,x.verbose)
     else :
         print ("Job " + str(job) + " not yet implemented !")

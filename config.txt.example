@@ -18,7 +18,7 @@ DATOU_CLASS=533
 FACTOR=0.1
 THRESHOLD=120
 #85 is default quality compression with picamera module
-QUALITY=85
+QUALITY=110
 GPIOPIN1=17
 GPIOPIN2=0
 DATOU_ID_2=1038

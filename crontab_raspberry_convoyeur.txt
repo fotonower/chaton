@@ -38,7 +38,7 @@
 15 22 * * * sudo reboot
 
 # upload failed uploaded batch
-22 21 * * 1-6 mkdir -p $LOGFOLDER/`date "+\%Y/\%m/\%d"`/reupload;python /home/pi/workarea/git/raspberrypi/upload_photos.py -j reprise -n $BASENAME -u $HOST_FOTONOWER -f $BASEFOLDER -t $TOKEN  --datou_id=$DATOU_CLASS -F $FACTOR --threshold=$THRESHOLD >> $LOGFOLDER/`date "+\%Y/\%m/\%d"`/reupload/reupload_log.txt 2>&1
+22 22 * * 1-6 mkdir -p $LOGFOLDER/`date "+\%Y/\%m/\%d"`/reupload;python /home/pi/workarea/git/raspberrypi/upload_photos.py -j reprise -n $BASENAME -u $HOST_FOTONOWER -f $BASEFOLDER -t $TOKEN  --datou_id=$DATOU_CLASS -F $FACTOR --threshold=$THRESHOLD >> $LOGFOLDER/`date "+\%Y/\%m/\%d"`/reupload/reupload_log.txt 2>&1
 
 # kill ssh tunnel in case || MG 30-01-19 I don't know why, the field changed on balle3 so doing both now
 22 * * * * kill `ps -eo pid,args | grep charlot | grep -v grep | cut -d" " -f 2`
