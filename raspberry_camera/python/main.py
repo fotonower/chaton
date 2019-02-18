@@ -225,7 +225,7 @@ if __name__ == "__main__":
     elif job == 'get_sound':
         get_sound(folder,x.duration,x.fs,x.verbose)
     elif job == 'test':
-        get_sound(folder,x.duration,x.fs,x.verbose)
+        test(folder,x.duration,x.fs,x.verbose)
     else :
         print ("Job " + str(job) + " not yet implemented !")
 
