@@ -89,7 +89,7 @@ def test(rotation,gpio_pin,gpio_pin2,shutter,folder,verbose,delay=60,fs=44100):
         for i in range(0,50):
             take_picture(lsr, folder, camera, verbose)
         GPIO.output(gpio_pin2, GPIO.HIGH)
-        time.sleep(25)
+        time.sleep(60)
 
 def get_sensor_and_take_pic(rotation,gpio_pin,gpio_pin2,shutter,folder,verbose,duration=60,fs=44100):
     import RPi.GPIO as GPIO
