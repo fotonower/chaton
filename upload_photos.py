@@ -152,6 +152,26 @@ def reupload(day,folder,current,lsr,datou,threshold,factor = 0.1):
     print("we uploaded {} folder(s) and we missed {} folder(s)".format(uploaded, missed))
     return {"uploaded": uploaded, "missed" : missed}
 
+def reupload_hour(day,hour,folder,current,lsr,datou,threshold,factor = 0.1):
+    if day == "":
+        day = current.strftime("%d%m%Y")
+    if hour == "":
+        hour_current = datetime.datetime.now() - datetime.timedelta(hour=1)
+        hour = hour_current.strftime("%H")
+    fullpath = os.path.join(folder, day)
+    dict_result = {}
+    uploaded = 0
+    missed = 0
+    for minute in os.listdir(os.path.join(fullpath, hour)):
+        res = upload(x.folder, day, hour, minute, x.name, fc,lsr,datou,threshold,factor)
+        dict_result[day + hour + minute] = res
+        if res == 0:
+            uploaded += 1
+        else:
+            missed += 1
+    print("we uploaded {} folder(s) and we missed {} folder(s)".format(uploaded, missed))
+    return {"uploaded": uploaded, "missed" : missed}
+
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser(description='uploader for rapsberry')
@@ -170,6 +190,7 @@ if __name__ == "__main__":
                       default="raspberry", help="base name for portfolio")
     parser.add_argument('-j', '--job', dest="job", type=str, action="store", default="upload", help="upload or reprise")
     parser.add_argument("-D", "--day", type=str, dest='day', default="", help="day of folder to upload")
+    parser.add_argument("-H", "--hour", type=str, dest='hour', default="", help="hour of folder to upload")
     parser.add_argument("--folder_local_db", action="store", type=str, dest="folder_local_db",
                       default="/home/pi/.fotonower_config",
                       help="local folder to save stat and info")
@@ -268,6 +289,13 @@ if __name__ == "__main__":
             exit(2)
         day = x.day
         reupload(day,folder,current, lsr,x.datou_id,x.threshold,x.factor)
+    elif x.job == "reprise_hour":
+        if not os.path.isdir(folder):
+            print("please provide a valid folder")
+            exit(2)
+        day = x.day
+        hour = x.hour
+        reupload_hour(day,hour,folder,current, lsr,x.datou_id,x.threshold,x.factor)
     elif x.job == "test":
         print(os.getenv('PYTHONPATH'))
         from tests.upload_test import test
