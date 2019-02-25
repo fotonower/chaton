@@ -290,6 +290,10 @@ if __name__ == "__main__":
         day = x.day
         reupload(day,folder,current, lsr,x.datou_id,x.threshold,x.factor)
     elif x.job == "reprise_hour":
+        test = count_process(verbose)
+        if test > 3:
+            print("too many processes, exiting")
+            exit(3)
         if not os.path.isdir(folder):
             print("please provide a valid folder")
             exit(2)
