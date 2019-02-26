@@ -72,7 +72,8 @@ def test(rotation,gpio_pin,gpio_pin2,shutter,folder,verbose,delay=60,fs=44100):
     camera = ""
     try:
         camera = PiCamera()
-        camera.start_preview()
+        camera.resolution = (1920,1080)
+        #camera.start_preview()
         camera.rotation = rotation % 360
         camera.shutter_speed = shutter
         print("launching script")
@@ -218,7 +219,7 @@ if __name__ == "__main__":
                 pass
 
     if job == "take_photo": # VR 29-8-18 : I suggest to make a function of all this instead of having it in the main
-        take_pictures(lsr,folder, x.end, x.pause,x.shutter,x.quality, x.verbose)
+            take_pictures(lsr,folder, x.end, x.pause,x.shutter,x.quality, x.verbose)
     elif job == 'take_photo_from_captor':
         get_sensor_and_take_pic(x.rotation, x.gpio_pin,x.gpio_pin2, x.shutter, folder, x.verbose, x.duration)
     elif job == 'take_photo_from_card':
