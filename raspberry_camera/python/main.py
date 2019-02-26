@@ -26,12 +26,12 @@ def take_picture(lsr,base_folder,camera,verbose=False):
     if lsr:
         lsr.append_photo(filename)
 
-def take_pictures(lsr,base_folder,end,pause,shutter,quality,verbose= False):
+def take_pictures(lsr,base_folder,end,pause,shutter,quality,verbose= False,width=720,height=480):
 
     camera = ""
     try:
         camera = PiCamera()
-        camera.start_preview()
+        camera.resolution = (width, height)
         camera.rotation = x.rotation % 360
         camera.shutter_speed = shutter
         print("launching script")
@@ -66,13 +66,13 @@ def take_pictures(lsr,base_folder,end,pause,shutter,quality,verbose= False):
         sleep(pause)
 
 
-def test(rotation,gpio_pin,gpio_pin2,shutter,folder,verbose,delay=60,fs=44100):
+def test(rotation,gpio_pin,gpio_pin2,shutter,folder,verbose,width=720,height=480,delay=60,fs=44100):
     import RPi.GPIO as GPIO
     import time
     camera = ""
     try:
         camera = PiCamera()
-        camera.resolution = (1920,1080)
+        camera.resolution = (width,height)
         #camera.start_preview()
         camera.rotation = rotation % 360
         camera.shutter_speed = shutter
@@ -91,15 +91,15 @@ def test(rotation,gpio_pin,gpio_pin2,shutter,folder,verbose,delay=60,fs=44100):
             time.sleep(0.10)
             take_picture(lsr, folder, camera, verbose)
         GPIO.output(gpio_pin2, GPIO.HIGH)
-        time.sleep(60)
+        time.sleep(delay)
 
-def get_sensor_and_take_pic(rotation,gpio_pin,gpio_pin2,shutter,folder,verbose,duration=60,fs=44100):
+def get_sensor_and_take_pic(rotation,gpio_pin,gpio_pin2,shutter,folder,verbose,width=720,height=480,duration=60,fs=44100):
     import RPi.GPIO as GPIO
 
     camera = ""
     try:
         camera = PiCamera()
-        camera.start_preview()
+        camera.resolution = (width, height)
         camera.rotation = rotation % 360
         camera.shutter_speed = shutter
         print("launching script")
@@ -124,13 +124,13 @@ def get_sensor_and_take_pic(rotation,gpio_pin,gpio_pin2,shutter,folder,verbose,d
             if gpio_pin2 != 0:
                 GPIO.output(gpio_pin2, GPIO.HIGH)
 
-def get_sensor_card_and_take_pic(rotation,gpio_pin,shutter,folder,verbose):
+def get_sensor_card_and_take_pic(rotation,gpio_pin,shutter,folder,verbose,width=720,height=480):
     import ads1256  # import this lib
     ads1256.start(str(1), "25")
     camera = ""
     try:
         camera = PiCamera()
-        camera.start_preview()
+        camera.resolution = (width, height)
         camera.rotation = rotation % 360
         camera.shutter_speed = shutter
         print("launching script")
@@ -195,6 +195,8 @@ if __name__ == "__main__":
     parser.add_option('-H', '--gpiopin2', type='int',dest='gpio_pin2', default=0, help="gpio pin for LIGHT captor")
     parser.add_option('-s','--shutter_speed',dest='shutter',default=10000,type='int',help='shutter speed for camera',action='store')
     parser.add_option('-q', '--quality', dest='quality', default=100, type='int', help='compression quality for jpeg format')
+    parser.add_option('-w', '--width', dest='width', default=720, type='int',help='width of picture')
+    parser.add_option('--height', dest='height', default=480, type='int',help='height of picture')
     parser.add_option('--duration', dest='duration',default=60,type='int',help='duration for sound recording')
     parser.add_option('--fs',dest='fs',default=44100,type='int',help='sound frequency')
     parser.add_option('-m', '--media', action='store_true', default=False, dest='media',
@@ -219,15 +221,15 @@ if __name__ == "__main__":
                 pass
 
     if job == "take_photo": # VR 29-8-18 : I suggest to make a function of all this instead of having it in the main
-            take_pictures(lsr,folder, x.end, x.pause,x.shutter,x.quality, x.verbose)
+            take_pictures(lsr,folder, x.end, x.pause,x.shutter,x.quality, x.verbose, x.width,x.height)
     elif job == 'take_photo_from_captor':
-        get_sensor_and_take_pic(x.rotation, x.gpio_pin,x.gpio_pin2, x.shutter, folder, x.verbose, x.duration)
+        get_sensor_and_take_pic(x.rotation, x.gpio_pin,x.gpio_pin2, x.shutter, folder, x.verbose, x.duration, x.width,x.height)
     elif job == 'take_photo_from_card':
-        get_sensor_card_and_take_pic(x.rotation, x.gpio_pin, x.shutter, folder, x.verbose)
+        get_sensor_card_and_take_pic(x.rotation, x.gpio_pin, x.shutter, folder, x.verbose, x.width,x.height)
     elif job == 'get_sound':
         get_sound(folder,x.duration,x.fs,x.verbose)
     elif job == 'test':
-        test(x.rotation, x.gpio_pin,x.gpio_pin2, x.shutter, folder, x.verbose, x.duration)
+        test(x.rotation, x.gpio_pin,x.gpio_pin2, x.shutter, folder, x.verbose, x.duration, x.width,x.height)
     else :
         print ("Job " + str(job) + " not yet implemented !")
 
