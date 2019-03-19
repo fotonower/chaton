@@ -26,6 +26,11 @@ def take_picture(lsr,base_folder,camera,verbose=False):
     if lsr:
         lsr.append_photo(filename)
 
+def dump_photo_taken(to_dump):
+    print(to_dump)
+    test = 1
+
+
 def take_pictures(lsr,base_folder,end,pause,shutter,quality,verbose= False,width=720,height=480):
 
     camera = ""
@@ -40,6 +45,9 @@ def take_pictures(lsr,base_folder,end,pause,shutter,quality,verbose= False,width
         return
     folder = ""
     last_minute = ""
+    photo_taken_by_hour = 0
+    now = datetime.now()
+    last_hour =  now.strftime("%H")
     while True:
         if verbose:
             print("taking picture")
@@ -47,12 +55,9 @@ def take_pictures(lsr,base_folder,end,pause,shutter,quality,verbose= False,width
             sys.stdout.write(".")
             sys.stdout.flush()
         now = datetime.now()
-        #    now_date = str(now).replace(":", "_").replace(" ", "").replace("-", "_").replace(".", "_").replace("\/", "_")
-        #    print(now_date)
         day = now.strftime("%d%m%Y")
         hour = now.strftime("%H")
         minutes = now.strftime("%M")
-
         if int(hour) >= end:
             exit(0)
         if last_minute != minutes:
@@ -62,6 +67,11 @@ def take_pictures(lsr,base_folder,end,pause,shutter,quality,verbose= False,width
         last_minute = minutes
         filename = folder + '/image_{}_{}_{}_{}_{}.jpg'.format(str(day), str(hour), str(minutes), now.strftime("%S"), now.microsecond)
         camera.capture(filename, quality=quality,thumbnail=None)
+        if hour != last_hour:
+            dump_photo_taken(photo_taken_by_hour)
+            photo_taken_by_hour = 0
+            last_hour = hour
+        photo_taken_by_hour += 1
         lsr.append_photo(filename)
         sleep(pause)
 
@@ -165,6 +175,21 @@ def get_sound(base_folder,duration,fs,verbose):
             print("dumping sound into {}".format(filename))
         write(filename, fs, myrecording)
 
+
+def test_connect(root_url, verbose= False):
+    import socket
+    try:
+        # see if we can resolve the host name -- tells us if there is
+        # a DNS listening
+        host = socket.gethostbyname(root_url)
+        # connect to the host -- tells us if the host is actually
+        # reachable
+        s = socket.create_connection((host, 80), 2)
+        return True
+    except:
+        pass
+    return False
+
 if __name__ == "__main__":
     parser = OptionParser()
     parser.add_option("-f", "--folder", action="store", type="string", dest="folder", default="/home/pi/Desktop/images",
@@ -230,6 +255,9 @@ if __name__ == "__main__":
         get_sound(folder,x.duration,x.fs,x.verbose)
     elif job == 'test':
         test(x.rotation, x.gpio_pin,x.gpio_pin2, x.shutter, folder, x.verbose, x.duration, x.width,x.height)
+    elif job == "test_connect":
+        is_connected = test_connect(x.root_url, x.verbose)
+        print("is connected = {}".format(is_connected))
     else :
         print ("Job " + str(job) + " not yet implemented !")
 
