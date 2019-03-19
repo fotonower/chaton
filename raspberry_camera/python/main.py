@@ -224,7 +224,7 @@ if __name__ == "__main__":
     parser.add_option('--height', dest='height', default=480, type='int',help='height of picture')
     parser.add_option('--duration', dest='duration',default=60,type='int',help='duration for sound recording')
     parser.add_option('--fs',dest='fs',default=44100,type='int',help='sound frequency')
-    parser.add_option('-m', '--media', action='store_true', default=False, dest='media',
+    parser.add_option('-m', '--media', action='store_false', default=True, dest='media',
                         help='if true images to upload on external device')
     (x, args) = parser.parse_args()
 
