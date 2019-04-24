@@ -152,6 +152,14 @@ def reupload(day,folder,current,lsr,datou,threshold,factor = 0.1):
     print("we uploaded {} folder(s) and we missed {} folder(s)".format(uploaded, missed))
     return {"uploaded": uploaded, "missed" : missed}
 
+def check_day(day,folder,current, lsr,threshold,factor, verbose=False):
+    if day == "":
+        day = current.strftime("%d%m%Y")
+    fullpath = os.path.join(folder, day)
+    for hour in os.listdir(fullpath):
+        for minute in os.listdir(os.path.join(fullpath, hour)):
+            check_pictures(folder,day,hour,minute,lsr,threshold,factor)
+
 def reupload_hour(day,hour,folder,current,lsr,datou,threshold,factor = 0.1):
     if day == "":
         day = current.strftime("%d%m%Y")
@@ -254,7 +262,7 @@ if __name__ == "__main__":
 
     current = datetime.datetime.now() - datetime.timedelta(minutes=1)
     print(current)
-    if x.token == "" and not (x.job == "count" or x.job == "check_image"):
+    if x.token == "" and not (x.job == "count" or x.job == "check_image" or x.job == "check_day"):
         print("please provide a token")
         exit(1)
     if x.token != "":
@@ -322,5 +330,8 @@ if __name__ == "__main__":
         else:
             minutes = current.strftime("%M")
         check_pictures(folder,day,hour,minutes, lsr, x.threshold, x.factor)
+    elif x.job == "check_day":
+        day = x.day
+        check_day(day, folder, current, lsr, x.threshold, x.factor)
 
 
