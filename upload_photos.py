@@ -191,6 +191,7 @@ if __name__ == "__main__":
     parser.add_argument('-j', '--job', dest="job", type=str, action="store", default="upload", help="upload or reprise")
     parser.add_argument("-D", "--day", type=str, dest='day', default="", help="day of folder to upload")
     parser.add_argument("-H", "--hour", type=str, dest='hour', default="", help="hour of folder to upload")
+    parser.add_argument("-M", "--minutes", type=str, dest='minutes', default="", help="minute of folder to upload")
     parser.add_argument("--folder_local_db", action="store", type=str, dest="folder_local_db",
                       default="/home/pi/.fotonower_config",
                       help="local folder to save stat and info")
@@ -203,6 +204,7 @@ if __name__ == "__main__":
     parser.add_argument('-F','--factor', action='store',default=0.1,type=float,dest='factor',help='factor to resize under threshold image img')
     parser.add_argument('-m', '--media', action='store_true', default=False, dest='media',
                         help='if true images to upload on external device')
+
 
     x = parser.parse_args()
 
@@ -252,14 +254,15 @@ if __name__ == "__main__":
 
     current = datetime.datetime.now() - datetime.timedelta(minutes=1)
     print(current)
-    if x.token == "" and x.job != "count" :
+    if x.token == "" and not (x.job == "count" or x.job == "check_image"):
         print("please provide a token")
         exit(1)
-    try:
-        fc = FC.FotonowerConnect(x.token, x.root_url, x.protocol)
-    except Exception as e:
-        print("please provide a valid token")
-        exit(1)
+    if x.token != "":
+        try:
+            fc = FC.FotonowerConnect(x.token, x.root_url, x.protocol)
+        except Exception as e:
+            print("please provide a valid token")
+            exit(1)
     if x.job == "count":
         count_process(verbose)
     elif x.job == "upload":
@@ -304,5 +307,20 @@ if __name__ == "__main__":
         print(os.getenv('PYTHONPATH'))
         from tests.upload_test import test
         ret = test(True)
+
+    elif x.job == "check_image" :
+        if x.day != "":
+            day = x.day
+        else:
+            day = current.strftime("%d%m%Y")
+        if x.hour != "":
+            hour = x.hour
+        else:
+            hour = current.strftime("%H")
+        if x.minutes != "":
+            minutes = x.minutes
+        else:
+            minutes = current.strftime("%M")
+        check_pictures(folder,day,hour,minutes, lsr, x.threshold, x.factor)
 
 
